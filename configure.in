@@ -1,4 +1,4 @@
-AC_INIT(src/asf.c)
+AC_INIT(tests/main.c)
 AM_INIT_AUTOMAKE(libasf,0.0.1)
 AM_PROG_LIBTOOL
 
@@ -10,7 +10,5 @@ AC_PROG_MAKE_SET
 
 CFLAGS="$CFLAGS -ansi -pedantic -Wall"
 
-AC_OUTPUT(Makefile)
-AC_OUTPUT(src/Makefile)
-AC_OUTPUT(tests/Makefile)
+AC_OUTPUT(Makefile src/Makefile tests/Makefile)
 
