@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall -ansi -pedantic
+CFLAGS=-g -Wall -ansi -pedantic -DDEBUG
 
 all: libasf
 

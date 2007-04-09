@@ -190,11 +190,10 @@ asf_seek_to_msec(asf_file_t *file, uint64_t msec)
 
 		audiocount = 0;
 		for (i=0; i<ASF_MAX_STREAMS; i++) {
-			/* Video files are not seekable without index */
-			if (file->streams[i].type == ASF_STREAM_TYPE_VIDEO)
+			/* Non-audio files are not seekable without index */
+			if (file->streams[i].type != ASF_STREAM_TYPE_AUDIO)
 				return ASF_ERROR_SEEKABLE;
-
-			if (file->streams[i].type == ASF_STREAM_TYPE_AUDIO)
+			else
 				audiocount++;
 		}
 
@@ -209,14 +208,31 @@ asf_seek_to_msec(asf_file_t *file, uint64_t msec)
 	}
 
 	if (file->index) {
-		uint32_t index_entry;
+		uint32_t entry_index;
+		uint64_t index_position;
+		uint8_t index_entry[6];
+		int tmp;
 
 		/* Fetch current packet from index entry structure */
-		index_entry = msec * 10000 / file->index->entry_time_interval;
-		if (index_entry >= file->index->entry_count) {
+		entry_index = msec * 10000 / file->index->entry_time_interval;
+		if (entry_index >= file->index->entry_count) {
 			return ASF_ERROR_SEEK;
 		}
-		packet = file->index->entries[index_entry].packet_index;
+
+		/* each index entry is of size 6 bytes (4 bytes index, 2 bytes packet count) */
+		index_position = file->index->entries_position + entry_index*6;
+
+		seek_position = file->stream.seek(file->stream.opaque,
+						  index_position,
+						  ASF_SEEK_SET);
+		if (seek_position != index_position)
+			return ASF_ERROR_SEEK;
+
+		tmp = asf_byteio_read(index_entry, 6, &file->stream);
+		if (tmp < 0) {
+			return ASF_ERROR_IO;
+		}
+		packet = asf_byteio_getDWLE(index_entry);
 	} else {
 		/* convert msec into bytes per second and divide with packet_size */
 		packet = msec * file->max_bitrate / 8000 / file->packet_size;
@@ -246,8 +262,6 @@ asf_close(asf_file_t *file)
 {
 	asf_header_destroy(file->header);
 	free(file->data);
-	if (file->index)
-		free(file->index->entries);
 	free(file->index);
 
 	if (file->filename)

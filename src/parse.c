@@ -287,9 +287,7 @@ asf_parse_index(asf_file_t *file)
 	asf_object_index_t *index;
 	asf_stream_t *stream;
 	uint8_t idata[56];
-	uint64_t entry_data_size;
-	uint8_t *entry_data = NULL;
-	int tmp, i;
+	int tmp;
 
 	file->index = NULL;
 	stream = &file->stream;
@@ -325,37 +323,11 @@ asf_parse_index(asf_file_t *file)
 	index->entry_time_interval = asf_byteio_getQWLE(idata + 40);
 	index->max_packet_count = asf_byteio_getDWLE(idata + 48);
 	index->entry_count = asf_byteio_getDWLE(idata + 52);
+	index->entries_position = file->index_position + 56;
 
 	if (index->entry_count * 6 + 56 > index->size) {
 		return ASF_ERROR_INVALID_LENGTH;
 	}
-
-	entry_data_size = index->entry_count * 6;
-	entry_data = malloc(entry_data_size * sizeof(uint8_t));
-	if (!entry_data) {
-		free(index);
-		return ASF_ERROR_OUTOFMEM;
-	}
-	tmp = asf_byteio_read(entry_data, entry_data_size, stream);
-	if (tmp < 0) {
-		free(index);
-		free(entry_data);
-		return tmp;
-	}
-
-	index->entries = malloc(index->entry_count * sizeof(asf_index_entry_t));
-	if (!index->entries) {
-		free(index);
-		free(entry_data);
-		return ASF_ERROR_OUTOFMEM;
-	}
-
-	for (i=0; i<index->entry_count; i++) {
-		index->entries[i].packet_index = asf_byteio_getDWLE(entry_data + i*6);
-		index->entries[i].packet_count = asf_byteio_getWLE(entry_data + i*6 + 4);
-	}
-
-	free(entry_data);
 
 	return index->size;
 }

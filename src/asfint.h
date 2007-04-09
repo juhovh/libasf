@@ -60,7 +60,7 @@ struct asf_object_index_s {
 	uint64_t entry_time_interval;
 	uint32_t max_packet_count;
 	uint32_t entry_count;
-	asf_index_entry_t *entries;
+	uint64_t entries_position;
 };
 typedef struct asf_object_index_s asf_object_index_t;
 
