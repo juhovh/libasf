@@ -48,13 +48,19 @@ struct asf_object_data_s {
 };
 typedef struct asf_object_data_s asf_object_data_t;
 
+struct asf_index_entry_s {
+	uint32_t packet_index;
+	uint16_t packet_count;
+};
+typedef struct asf_index_entry_s asf_index_entry_t;
+
 struct asf_object_index_s {
 	ASF_OBJECT_COMMON
 	guid_t   file_id;
 	uint64_t entry_time_interval;
 	uint32_t max_packet_count;
 	uint32_t entry_count;
-	uint64_t entries_position;
+	asf_index_entry_t *entries;
 };
 typedef struct asf_object_index_s asf_object_index_t;
 
