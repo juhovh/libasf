@@ -66,6 +66,9 @@ asf_init(asf_file_t *file)
 {
 	int tmp;
 
+	if (!file)
+		return ASF_ERROR_INTERNAL;
+
 	tmp = asf_parse_header(file);
 	if (tmp < 0) {
 #ifdef DEBUG
@@ -151,6 +154,9 @@ asf_get_packet(asf_file_t *file, asf_packet_t *packet)
 {
 	int tmp;
 
+	if (!file || !packet)
+		return ASF_ERROR_INTERNAL;
+
 	if (file->packet >= file->data_packets_count) {
 		return 0;
 	}
@@ -179,6 +185,9 @@ asf_seek_to_msec(asf_file_t *file, uint64_t msec)
 	uint64_t new_position;
 	uint64_t new_msec;
 	int64_t seek_position;
+
+	if (!file)
+		return ASF_ERROR_INTERNAL;
 
 	if (!(file->flags & ASF_FLAG_SEEKABLE) || !file->stream.seek) {
 		return ASF_ERROR_SEEKABLE;
@@ -243,22 +252,27 @@ asf_seek_to_msec(asf_file_t *file, uint64_t msec)
 void
 asf_close(asf_file_t *file)
 {
-	asf_header_destroy(file->header);
-	free(file->data);
-	if (file->index)
-		free(file->index->entries);
-	free(file->index);
+	if (file) {
+		asf_header_destroy(file->header);
+		free(file->data);
+		if (file->index)
+			free(file->index->entries);
+		free(file->index);
 
-	if (file->filename)
-		fclose(file->stream.opaque);
+		if (file->filename)
+			fclose(file->stream.opaque);
 
-	free(file);
+		free(file);
+	}
 }
 
 
 asf_metadata_t *
 asf_get_metadata(asf_file_t *file)
 {
+	if (!file)
+		return NULL;
+
 	return asf_header_get_metadata(file->header);
 }
 
@@ -266,5 +280,13 @@ void
 asf_free_metadata(asf_metadata_t *metadata)
 {
 	asf_header_metadata_destroy(metadata);
+}
+
+asf_stream_type_t
+*asf_get_stream_type(asf_file_t *file, uint8_t track) {
+	if (!file || track >= ASF_MAX_STREAMS)
+		return NULL;
+
+	return &file->streams[track];
 }
 

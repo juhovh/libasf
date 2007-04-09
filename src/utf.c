@@ -79,10 +79,3 @@ asf_utf8_from_utf16le(uint8_t *buf, uint16_t buflen)
 	ret[length] = '\0';
 	return ret;
 }
-
-uint16_t *
-asf_utf16_from_utf8(char *buf, uint16_t buflen)
-{
-	/* not implemented yet, not needed in parsing */
-	return NULL;
-}

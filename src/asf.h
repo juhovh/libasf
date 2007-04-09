@@ -126,6 +126,8 @@ void asf_free_packet(asf_packet_t *packet);
 asf_metadata_t *asf_get_metadata(asf_file_t *file);
 void asf_free_metadata(asf_metadata_t *metadata);
 
+asf_stream_type_t *asf_get_stream_type(asf_file_t *file, uint8_t track);
+
 uint64_t asf_file_get_file_size(asf_file_t *file);
 uint64_t asf_file_get_creation_date(asf_file_t *file);
 uint64_t asf_file_get_data_packets(asf_file_t *file);
