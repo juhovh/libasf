@@ -158,10 +158,16 @@ asf_data_read_payloads(asf_packet_t *packet,
 			}
 
 			packet->payload_count += i;
-			packet->payloads = realloc(packet->payloads,
-			                           packet->payload_count * sizeof(asf_payload_t));
-			if (!packet->payloads) {
-				return ASF_ERROR_OUTOFMEM;
+			if (packet->payload_count > packet->payloads_size) {
+				void *tempptr;
+
+				tempptr = realloc(packet->payloads,
+				                  packet->payload_count * sizeof(asf_payload_t));
+				if (!tempptr) {
+					return ASF_ERROR_OUTOFMEM;
+				}
+				packet->payloads = tempptr;
+				packet->payloads_size = packet->payload_count;
 			}
 
 			while (skip < datalen) {
