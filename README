@@ -1,0 +1,31 @@
+libasf parser library for ASF file format
+Copyright (C) 2006-2007  Juho Vähä-Herttua
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+----------
+
+This library is provided with the license above. It is based mainly on the
+documentation provided by VLC and ffmpeg ASF parsers but it is however
+rewritten and doesn't share any code with them except the necessary identifiers
+and variable names that are file format specific.
+
+Right now the status of this library is almost unusable but working. It is
+written in ANSI C, compiled with '-Wall -ansi -pedantic' flags, doesn't use any
+libraries and only very few libc functions. Therefore it should be highly
+portable. The goal is to make the library usable with all major open source
+music and video players. Already now it handles many errors better than its
+predecessors.
+
