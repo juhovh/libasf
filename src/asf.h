@@ -117,7 +117,7 @@ void asf_close(asf_file_t *file);
 int asf_init(asf_file_t *file);
 void asf_init_packet(asf_packet_t *packet);
 int asf_get_packet(asf_file_t *file, asf_packet_t *packet);
-uint64_t asf_seek_to_msec(asf_file_t *file, uint64_t msec);
+int64_t asf_seek_to_msec(asf_file_t *file, int64_t msec);
 void asf_free_packet(asf_packet_t *packet);
 
 asf_metadata_t *asf_get_metadata(asf_file_t *file);
