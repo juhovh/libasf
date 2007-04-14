@@ -4,7 +4,7 @@
 #include "asf.h"
 
 int
-asf_fileio_read_cb(void *buffer, int size, void *stream)
+asf_fileio_read_cb(void *stream, void *buffer, int size)
 {
 	int ret;
 
@@ -16,7 +16,7 @@ asf_fileio_read_cb(void *buffer, int size, void *stream)
 }
 
 int
-asf_fileio_write_cb(void *buffer, int size, void *stream)
+asf_fileio_write_cb(void *stream, void *buffer, int size)
 {
 	int ret;
 

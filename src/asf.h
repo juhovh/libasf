@@ -20,27 +20,12 @@ typedef unsigned __int64 uint64_t;
 
 
 struct asf_stream_s {
-	int (*read)(void *buffer, int size, void *opaque);
-	int (*write)(void *buffer, int size, void *opaque);
+	int32_t (*read)(void *opaque, void *buffer, int32_t size);
+	int32_t (*write)(void *opaque, void *buffer, int32_t size);
 	int64_t (*seek)(void *opaque, int64_t offset, int whence);
 	void *opaque;
 };
 typedef struct asf_stream_s asf_stream_t;
-
-struct asf_payload_s {
-	uint8_t stream_number;
-	uint32_t media_object_number;
-	uint32_t media_object_offset;
-
-	uint32_t replicated_length;
-	uint8_t *replicated_data;
-
-	uint32_t datalen;
-	uint8_t *data;
-
-	uint32_t pts;
-};
-typedef struct asf_payload_s asf_payload_t;
 
 struct asf_metadata_entry_s {
 	char *key;
@@ -58,6 +43,21 @@ struct asf_metadata_s {
 	asf_metadata_entry_t *extended;
 };
 typedef struct asf_metadata_s asf_metadata_t;
+
+struct asf_payload_s {
+	uint8_t stream_number;
+	uint32_t media_object_number;
+	uint32_t media_object_offset;
+
+	uint32_t replicated_length;
+	uint8_t *replicated_data;
+
+	uint32_t datalen;
+	uint8_t *data;
+
+	uint32_t pts;
+};
+typedef struct asf_payload_s asf_payload_t;
 
 struct asf_packet_s {
 	uint8_t ec_length;

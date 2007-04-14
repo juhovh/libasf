@@ -85,7 +85,7 @@ asf_byteio_read(uint8_t *data, int size, asf_stream_t *stream)
 		return ASF_ERROR_INTERNAL;
 	}
 
-	while ((tmp = stream->read(data+read, size-read, stream->opaque)) > 0) {
+	while ((tmp = stream->read(stream->opaque, data+read, size-read)) > 0) {
 		read += tmp;
 
 		if (read == size) {
