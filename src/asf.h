@@ -22,7 +22,7 @@ typedef unsigned __int64 uint64_t;
 struct asf_stream_s {
 	int32_t (*read)(void *opaque, void *buffer, int32_t size);
 	int32_t (*write)(void *opaque, void *buffer, int32_t size);
-	int64_t (*seek)(void *opaque, int64_t offset, int whence);
+	int64_t (*seek)(void *opaque, int64_t offset);
 	void *opaque;
 };
 typedef struct asf_stream_s asf_stream_t;
@@ -84,12 +84,6 @@ struct asf_stream_type_s {
 typedef struct asf_stream_type_s asf_stream_type_t;
 
 typedef struct asf_file_s asf_file_t;
-
-enum {
-	ASF_SEEK_SET,
-	ASF_SEEK_CUR,
-	ASF_SEEK_END
-};
 
 #define ASF_STREAM_TYPE_NONE     0x00
 #define ASF_STREAM_TYPE_AUDIO    0x01

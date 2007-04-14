@@ -96,8 +96,7 @@ asf_init(asf_file_t *file)
 
 		while (!file->index && file->index_position < file->file_size) {
 			seek_position = file->stream.seek(file->stream.opaque,
-							  file->index_position,
-							  ASF_SEEK_SET);
+							  file->index_position);
 			if (seek_position != file->index_position) {
 				/* Error in seeking */
 				break;
@@ -124,8 +123,7 @@ asf_init(asf_file_t *file)
 		}
 
 		seek_position = file->stream.seek(file->stream.opaque,
-		                                  file->data->packets_position,
-		                                  ASF_SEEK_SET);
+		                                  file->data->packets_position);
 		if (seek_position != file->data->packets_position) {
 			/* Couldn't seek back to packets position, this is fatal! */
 			return ASF_ERROR_SEEK;
@@ -235,8 +233,7 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 	new_msec = packet * file->packet_size * 8000 / file->max_bitrate;
 
 	seek_position = file->stream.seek(file->stream.opaque,
-	                                  new_position,
-	                                  ASF_SEEK_SET);
+	                                  new_position);
 
 	if (seek_position < 0 || seek_position != new_position) {
 		return ASF_ERROR_SEEK;

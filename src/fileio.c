@@ -28,26 +28,11 @@ asf_fileio_write_cb(void *stream, void *buffer, int size)
 }
 
 int64_t
-asf_fileio_seek_cb(void *stream, int64_t offset, int whence)
+asf_fileio_seek_cb(void *stream, int64_t offset)
 {
-	int fwhence;
 	int ret;
 
-	switch (whence) {
-	case ASF_SEEK_SET:
-		fwhence = SEEK_SET;
-		break;
-	case ASF_SEEK_CUR:
-		fwhence = SEEK_CUR;
-		break;
-	case ASF_SEEK_END:
-		fwhence = SEEK_END;
-		break;
-	default:
-		return ASF_ERROR_INTERNAL;
-	}
-
-	ret = fseek(stream, offset, fwhence);
+	ret = fseek(stream, offset, SEEK_SET);
 	if (ret < 0)
 		return -1;
 
