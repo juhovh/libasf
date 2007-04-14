@@ -16,7 +16,7 @@
 	 0 : *(data) : asf_byteio_getWLE(data) : asf_byteio_getDWLE(data))
 
 static int
-asf_data_read_packet_data(asf_packet_t *packet, uint8_t flags, asf_stream_t *stream)
+asf_data_read_packet_data(asf_packet_int_t *packet, uint8_t flags, asf_stream_t *stream)
 {
 	uint8_t datalen;
 	uint8_t data[18];
@@ -70,7 +70,7 @@ asf_data_read_payload_data(asf_payload_t *payload, uint8_t flags, uint8_t *data,
 }
 
 static int
-asf_data_read_payloads(asf_packet_t *packet,
+asf_data_read_payloads(asf_packet_int_t *packet,
                        uint64_t preroll,
                        uint8_t multiple,
                        uint8_t type,
@@ -199,7 +199,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 }
 
 void
-asf_data_init_packet(asf_packet_t *packet)
+asf_data_init_packet(asf_packet_int_t *packet)
 {
 	packet->ec_length = 0;
 	packet->ec_data = NULL;
@@ -220,7 +220,7 @@ asf_data_init_packet(asf_packet_t *packet)
 }
 
 int
-asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
+asf_data_get_packet(asf_packet_int_t *packet, asf_file_t *file)
 {
 	asf_stream_t *stream;
 	uint32_t read = 0;
@@ -354,7 +354,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 }
 
 void
-asf_data_free_packet(asf_packet_t *packet)
+asf_data_free_packet(asf_packet_int_t *packet)
 {
 	if (!packet)
 		return;

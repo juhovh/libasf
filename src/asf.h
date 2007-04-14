@@ -62,7 +62,6 @@ typedef struct asf_metadata_s asf_metadata_t;
 struct asf_packet_s {
 	uint8_t ec_length;
 	uint8_t *ec_data;
-	uint8_t ec_data_size;
 
 	uint32_t length;
 	uint32_t padding_length;
@@ -71,11 +70,9 @@ struct asf_packet_s {
 
 	uint16_t payload_count;
 	asf_payload_t *payloads;
-	uint16_t payloads_size;
 
 	uint32_t datalen;
 	uint8_t *payload_data;
-	uint32_t payload_data_size;
 };
 typedef struct asf_packet_s asf_packet_t;
 

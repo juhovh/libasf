@@ -146,7 +146,7 @@ asf_init(asf_file_t *file)
 void
 asf_init_packet(asf_packet_t *packet)
 {
-	asf_data_init_packet(packet);
+	asf_data_init_packet((asf_packet_int_t *) packet);
 }
 
 int
@@ -161,7 +161,7 @@ asf_get_packet(asf_file_t *file, asf_packet_t *packet)
 		return 0;
 	}
 
-	tmp = asf_data_get_packet(packet, file);
+	tmp = asf_data_get_packet((asf_packet_int_t *) packet, file);
 	if (tmp < 0) {
 		return tmp;
 	}
@@ -175,7 +175,7 @@ asf_get_packet(asf_file_t *file, asf_packet_t *packet)
 void
 asf_free_packet(asf_packet_t *packet)
 {
-	asf_data_free_packet(packet);
+	asf_data_free_packet((asf_packet_int_t *) packet);
 }
 
 uint64_t

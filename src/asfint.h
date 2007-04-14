@@ -5,6 +5,28 @@
 #include "asf.h"
 #include "guid.h"
 
+struct asf_packet_int_s {
+	/* This has to be exactly the same with asf.h asf_packet_s */
+	uint8_t ec_length;
+	uint8_t *ec_data;
+
+	uint32_t length;
+	uint32_t padding_length;
+	uint32_t send_time;
+	uint16_t duration;
+
+	uint16_t payload_count;
+	asf_payload_t *payloads;
+
+	uint32_t datalen;
+	uint8_t *payload_data;
+
+	/* Hidden size data only available for internal use */
+	uint8_t ec_data_size;
+	uint16_t payloads_size;
+	uint32_t payload_data_size;
+};
+typedef struct asf_packet_int_s asf_packet_int_t;
 
 #define ASF_OBJECT_COMMON      \
 	guid_t       guid;     \
