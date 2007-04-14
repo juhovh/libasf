@@ -26,7 +26,7 @@ print_metadata(asf_metadata_t *metadata) {
 int main(int argc, char *argv[]) {
 	asf_file_t *file;
 	asf_metadata_t *metadata;
-	asf_packet_t pkt;
+	asf_packet_t *pkt;
 	int i;
 
 	if (argc != 2) {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 		asf_free_metadata(metadata);
 	}
 
-	asf_init_packet(&pkt);
+	pkt = asf_packet_create();
 	for (i=0; i<10; i++) {
 		int tmp;
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 			printf("Seek failed\n");
 		}
 
-		if ((tmp = asf_get_packet(file, &pkt)) < 0) {
+		if ((tmp = asf_get_packet(file, pkt)) < 0) {
 			printf("Error %d getting packet\n", tmp);
 			break;
 		}
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 	}
-	asf_free_packet(&pkt);
+	asf_free_packet(pkt);
 /*
 	printf("position after seek %lld\n", 
 	asf_seek_to_msec(file, 18000));

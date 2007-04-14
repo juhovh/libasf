@@ -62,6 +62,7 @@ typedef struct asf_payload_s asf_payload_t;
 struct asf_packet_s {
 	uint8_t ec_length;
 	uint8_t *ec_data;
+	uint8_t ec_data_size;
 
 	uint32_t length;
 	uint32_t padding_length;
@@ -70,9 +71,11 @@ struct asf_packet_s {
 
 	uint16_t payload_count;
 	asf_payload_t *payloads;
+	uint16_t payloads_size;
 
 	uint32_t datalen;
 	uint8_t *payload_data;
+	uint32_t payload_data_size;
 };
 typedef struct asf_packet_s asf_packet_t;
 
@@ -109,7 +112,7 @@ asf_file_t *asf_open_cb(asf_stream_t *stream);
 void asf_close(asf_file_t *file);
 
 int asf_init(asf_file_t *file);
-asf_packet_t *asf_init_packet();
+asf_packet_t *asf_packet_create();
 int asf_get_packet(asf_file_t *file, asf_packet_t *packet);
 int64_t asf_seek_to_msec(asf_file_t *file, int64_t msec);
 void asf_free_packet(asf_packet_t *packet);
