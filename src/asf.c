@@ -141,10 +141,18 @@ asf_init(asf_file_t *file)
 	return 0;
 }
 
-void
-asf_init_packet(asf_packet_t *packet)
+asf_packet_t *
+asf_init_packet()
 {
-	asf_data_init_packet((asf_packet_int_t *) packet);
+	asf_packet_t *ret;
+
+	ret = malloc(sizeof(asf_packet_int_t));
+	if (!ret)
+		return NULL;
+
+	asf_data_init_packet((asf_packet_int_t *) ret);
+
+	return ret;
 }
 
 int
@@ -174,6 +182,7 @@ void
 asf_free_packet(asf_packet_t *packet)
 {
 	asf_data_free_packet((asf_packet_int_t *) packet);
+	free(packet);
 }
 
 int64_t

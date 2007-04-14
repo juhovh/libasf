@@ -108,7 +108,11 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 					}
 
 					stype->datalen = asf_byteio_getDWLE(current->data + 40);
-					stype->data = current->data + 54;
+					if (stype->datalen) {
+						stype->data = current->data + 54;
+					} else {
+						stype->data = NULL;
+					}
 				}
 				break;
 			}

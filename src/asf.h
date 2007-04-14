@@ -109,7 +109,7 @@ asf_file_t *asf_open_cb(asf_stream_t *stream);
 void asf_close(asf_file_t *file);
 
 int asf_init(asf_file_t *file);
-void asf_init_packet(asf_packet_t *packet);
+asf_packet_t *asf_init_packet();
 int asf_get_packet(asf_file_t *file, asf_packet_t *packet);
 int64_t asf_seek_to_msec(asf_file_t *file, int64_t msec);
 void asf_free_packet(asf_packet_t *packet);
