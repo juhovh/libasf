@@ -302,8 +302,22 @@ asf_free_metadata(asf_metadata_t *metadata)
 	asf_header_metadata_destroy(metadata);
 }
 
-asf_stream_properties_t
-*asf_get_stream_properties(asf_file_t *file, uint8_t track) {
+uint8_t
+asf_get_stream_count(asf_file_t *file)
+{
+	uint8_t ret;
+	int i;
+
+	for (i = 0; i < ASF_MAX_STREAMS; i++) {
+		if (file->streams[i].type != ASF_STREAM_TYPE_NONE)
+			ret = i;
+	}
+
+	return ret;
+}
+
+asf_stream_properties_t *
+asf_get_stream_properties(asf_file_t *file, uint8_t track) {
 	if (!file || track >= ASF_MAX_STREAMS)
 		return NULL;
 

@@ -66,6 +66,8 @@ typedef struct asf_object_index_s asf_object_index_t;
 #define ASF_FLAG_BROADCAST 1
 #define ASF_FLAG_SEEKABLE  2
 
+#define ASF_MAX_STREAMS 128
+
 struct asf_file_s {
 	const char *filename;
 	asf_stream_t stream;

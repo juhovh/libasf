@@ -79,8 +79,6 @@ struct asf_packet_s {
 };
 typedef struct asf_packet_s asf_packet_t;
 
-#define ASF_MAX_STREAMS 128
-
 enum asf_stream_type_e {
 	ASF_STREAM_TYPE_NONE     = 0x00,
 	ASF_STREAM_TYPE_AUDIO    = 0x01,
@@ -152,6 +150,7 @@ void asf_free_packet(asf_packet_t *packet);
 asf_metadata_t *asf_get_metadata(asf_file_t *file);
 void asf_free_metadata(asf_metadata_t *metadata);
 
+uint8_t asf_get_stream_count(asf_file_t *file);
 asf_stream_properties_t *asf_get_stream_properties(asf_file_t *file, uint8_t track);
 
 uint64_t asf_file_get_file_size(asf_file_t *file);
