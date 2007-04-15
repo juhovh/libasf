@@ -63,8 +63,53 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 		break;
 	}
 	case GUID_STREAM_TYPE_VIDEO:
+	{
+		asf_bitmapinfoheader_t *bmih;
+		uint32_t width, height, flags, data_size;
+
 		sprop->type = ASF_STREAM_TYPE_VIDEO;
+
+		if (datalen < 51) {
+			return ASF_ERROR_INVALID_LENGTH;
+		}
+
+		width = asf_byteio_getDWLE(data);
+		height = asf_byteio_getDWLE(data + 4);
+		flags = data[8];
+		data_size = asf_byteio_getWLE(data + 9);
+
+		data += 11;
+		datalen -= 11;
+
+		if (asf_byteio_getDWLE(data) != datalen) {
+			return ASF_ERROR_INVALID_LENGTH;
+		}
+		if (width != asf_byteio_getDWLE(data + 4) ||
+		    height != asf_byteio_getDWLE(data + 8) ||
+		    flags != 2) {
+			return ASF_ERROR_INVALID_VALUE;
+		}
+
+		sprop->properties = malloc(sizeof(asf_waveformatex_t));;
+		if (!sprop->properties)
+			return ASF_ERROR_OUTOFMEM;
+
+		bmih = sprop->properties;
+		bmih->data_size = asf_byteio_getDWLE(data);
+		bmih->width = asf_byteio_getDWLE(data + 4);
+		bmih->height = asf_byteio_getDWLE(data + 8);
+		bmih->reserved = asf_byteio_getDWLE(data + 12);
+		bmih->bpp = asf_byteio_getDWLE(data + 14);
+		bmih->codec = asf_byteio_getDWLE(data + 16);
+		bmih->image_size = asf_byteio_getDWLE(data + 20);
+		bmih->hppm = asf_byteio_getDWLE(data + 24);
+		bmih->vppm = asf_byteio_getDWLE(data + 28);
+		bmih->colors = asf_byteio_getDWLE(data + 32);
+		bmih->important_colors = asf_byteio_getDWLE(data + 36);
+		bmih->data = data + 40;
+
 		break;
+	}
 	case GUID_STREAM_TYPE_COMMAND:
 		sprop->type = ASF_STREAM_TYPE_COMMAND;
 		break;
