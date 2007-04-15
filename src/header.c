@@ -54,7 +54,7 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 		wfx->codec_id = asf_byteio_getWLE(data);
 		wfx->channels = asf_byteio_getWLE(data + 2);
 		wfx->rate = asf_byteio_getDWLE(data + 4);
-		wfx->bitrate = asf_byteio_getDWLE(data + 8);
+		wfx->bitrate = asf_byteio_getDWLE(data + 8) * 8;
 		wfx->blockalign = asf_byteio_getWLE(data + 12);
 		wfx->bitspersample = asf_byteio_getWLE(data + 14);
 		wfx->datalen = asf_byteio_getWLE(data + 16);
