@@ -42,6 +42,7 @@ asf_data_read_packet_data(asf_packet_t *packet, uint8_t flags, asf_stream_t *str
 	packet->send_time = asf_byteio_getDWLE(datap);
 	datap += 4;
 	packet->duration = asf_byteio_getWLE(datap);
+	datap += 2;
 
 	return datalen;
 }
@@ -86,6 +87,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 		uint8_t pts_delta = 0;
 		int compressed = 0;
 
+		/* FIXME: mark keyframe? */
 		pl.stream_number = data[skip] & 0x7f;
 		skip++;
 
@@ -127,6 +129,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 
 		/* substract preroll value from pts since it's counted in */
 		pl.pts -= preroll;
+		/* FIXME: check that pts is positive */
 
 		if (multiple) {
 			tmp = GETLEN2b(type);
@@ -269,7 +272,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 
 	if ((packet_flags = asf_byteio_readbyte(stream)) < 0 ||
 	    (packet_property = asf_byteio_readbyte(stream)) < 0) {
-		return (packet_flags < 0) ? packet_flags : packet_property;;
+		return ASF_ERROR_IO;
 	}
 	read += 2;
 
@@ -279,10 +282,10 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	}
 	read += tmp;
 
-	/* this is really idiotic, packet length can (and often will) be
-	 * undefined and we just have to use the header packet size as the size
-	 * value */
-	if (!((packet_flags >> 5) & 0x03)) {
+	/* this is really idiotic, if packet length is smaller than packet size,
+	 * we need to manually add the additional bytes into padding length */
+	if (packet->length < file->packet_size) {
+		packet->padding_length += file->packet_size - packet->length;
 		packet->length = file->packet_size;
 	}
 
@@ -307,6 +310,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 
 	if (packet->length < read) {
 		/* header exceeded packet size, invalid file */
+		/* FIXME: should this be checked earlier? */
 		return ASF_ERROR_INVALID_LENGTH;
 	}
 
