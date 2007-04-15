@@ -268,7 +268,7 @@ asf_parse_data(asf_file_t *file)
 	data->reserved = asf_byteio_getWLE(ddata + 48);
 	data->packets_position = file->position + 50;
 
-	if (memcmp(&data->file_id, &file->file_id, sizeof(guid_t))) {
+	if (!asf_guid_match(&data->file_id, &file->file_id)) {
 		return ASF_ERROR_INVALID_VALUE;
 	}
 

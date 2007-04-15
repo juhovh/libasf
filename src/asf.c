@@ -231,6 +231,9 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 
 		audiocount = 0;
 		for (i=0; i<ASF_MAX_STREAMS; i++) {
+			if (file->streams[i].type == ASF_STREAM_TYPE_NONE)
+				continue;
+
 			/* Non-audio files are not seekable without index */
 			if (file->streams[i].type != ASF_STREAM_TYPE_AUDIO)
 				return ASF_ERROR_SEEKABLE;
@@ -244,7 +247,7 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 			return ASF_ERROR_SEEKABLE;
 	}
 
-	if (!file->play_duration || msec > (file->play_duration / 10000)) {
+	if (msec > (file->play_duration / 10000)) {
 		return ASF_ERROR_SEEK;
 	}
 
@@ -276,6 +279,10 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 	/* update current file position information */
 	file->position = new_position;
 	file->packet = packet;
+
+#ifdef DEBUG
+	printf("requested a seek to %d, seeked to %d\n", (int) msec, (int) new_msec);
+#endif
 
 	return new_msec;
 }

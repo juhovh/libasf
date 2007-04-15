@@ -42,6 +42,7 @@ enum guid_type_e {
 typedef enum guid_type_e guid_type_t;
 
 
+int asf_guid_match(const guid_t *guid1, const guid_t *guid2);
 guid_type_t asf_guid_get_object_type(const guid_t *guid);
 guid_type_t asf_guid_get_stream_type(const guid_t *guid);
 guid_type_t asf_guid_get_type(const guid_t *guid);
