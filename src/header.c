@@ -90,7 +90,7 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 			return ASF_ERROR_INVALID_VALUE;
 		}
 
-		sprop->properties = malloc(sizeof(asf_waveformatex_t));;
+		sprop->properties = malloc(sizeof(asf_bitmapinfoheader_t));;
 		if (!sprop->properties)
 			return ASF_ERROR_OUTOFMEM;
 
