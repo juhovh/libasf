@@ -95,7 +95,7 @@ struct asf_file_s {
 	uint32_t packet_size;
 	uint32_t max_bitrate;
 
-	asf_stream_type_t streams[ASF_MAX_STREAMS];
+	asf_stream_properties_t streams[ASF_MAX_STREAMS];
 };
 
 #endif

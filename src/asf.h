@@ -19,6 +19,18 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 
+struct asf_waveformatex_s {
+	uint16_t codec_id;
+	uint16_t channels;
+	uint32_t rate;
+	uint32_t bitrate;
+	uint16_t blockalign;
+	uint16_t bitspersample;
+	uint16_t datalen;
+	uint8_t *data;
+};
+typedef struct asf_waveformatex_s asf_waveformatex_t;
+
 struct asf_stream_s {
 	int32_t (*read)(void *opaque, void *buffer, int32_t size);
 	int32_t (*write)(void *opaque, void *buffer, int32_t size);
@@ -79,22 +91,24 @@ struct asf_packet_s {
 };
 typedef struct asf_packet_s asf_packet_t;
 
-struct asf_stream_type_s {
-	uint8_t type;
-	uint32_t datalen;
-	uint8_t *data;
+enum asf_stream_type_e {
+	ASF_STREAM_TYPE_NONE     = 0x00,
+	ASF_STREAM_TYPE_AUDIO    = 0x01,
+	ASF_STREAM_TYPE_VIDEO    = 0x02,
+	ASF_STREAM_TYPE_COMMAND  = 0x04,
+	ASF_STREAM_TYPE_UNKNOWN  = 0xff
 };
-typedef struct asf_stream_type_s asf_stream_type_t;
+typedef enum asf_stream_type_e asf_stream_type_t;
+
+struct asf_stream_properties_s {
+	asf_stream_type_t type;
+	void *properties;
+};
+typedef struct asf_stream_properties_s asf_stream_properties_t;
 
 typedef struct asf_file_s asf_file_t;
 
-#define ASF_STREAM_TYPE_NONE     0x00
-#define ASF_STREAM_TYPE_AUDIO    0x01
-#define ASF_STREAM_TYPE_VIDEO    0x02
-#define ASF_STREAM_TYPE_COMMAND  0x04
-#define ASF_STREAM_TYPE_UNKNOWN  0xff
-
-enum {
+enum asf_error_e {
 	ASF_ERROR_INTERNAL       = -1,  /* incorrect input to API calls */
 	ASF_ERROR_OUTOFMEM       = -2,  /* some malloc inside program failed */
 	ASF_ERROR_EOF            = -3,  /* unexpected end of file */
@@ -120,7 +134,7 @@ void asf_free_packet(asf_packet_t *packet);
 asf_metadata_t *asf_get_metadata(asf_file_t *file);
 void asf_free_metadata(asf_metadata_t *metadata);
 
-asf_stream_type_t *asf_get_stream_type(asf_file_t *file, uint8_t track);
+asf_stream_properties_t *asf_get_stream_properties(asf_file_t *file, uint8_t track);
 
 uint64_t asf_file_get_file_size(asf_file_t *file);
 uint64_t asf_file_get_creation_date(asf_file_t *file);

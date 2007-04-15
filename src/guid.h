@@ -12,7 +12,7 @@ struct guid_s {
 };
 typedef struct guid_s guid_t;
 
-enum GUID {
+enum guid_type_e {
 	GUID_UNKNOWN,
 
 	GUID_HEADER,
@@ -39,7 +39,7 @@ enum GUID {
 	GUID_STREAM_TYPE_VIDEO,
 	GUID_STREAM_TYPE_COMMAND
 };
-typedef enum GUID guid_type_t;
+typedef enum guid_type_e guid_type_t;
 
 
 guid_type_t asf_guid_get_object_type(const guid_t *guid);

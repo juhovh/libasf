@@ -26,6 +26,56 @@ asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 	return NULL;
 }
 
+static int
+asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
+                                   guid_type_t type,
+                                   uint8_t *data,
+                                   uint32_t datalen)
+{
+	switch (type) {
+	case GUID_STREAM_TYPE_AUDIO:
+	{
+		asf_waveformatex_t *wfx;
+
+		sprop->type = ASF_STREAM_TYPE_AUDIO;
+
+		if (datalen < 18) {
+			return ASF_ERROR_INVALID_LENGTH;
+		}
+		if (asf_byteio_getWLE(data + 16) > datalen - 16) {
+			return ASF_ERROR_INVALID_LENGTH;
+		}
+
+		sprop->properties = malloc(sizeof(asf_waveformatex_t));;
+		if (!sprop->properties)
+			return ASF_ERROR_OUTOFMEM;
+
+		wfx = sprop->properties;
+		wfx->codec_id = asf_byteio_getWLE(data);
+		wfx->channels = asf_byteio_getWLE(data + 2);
+		wfx->rate = asf_byteio_getDWLE(data + 4);
+		wfx->bitrate = asf_byteio_getDWLE(data + 8);
+		wfx->blockalign = asf_byteio_getWLE(data + 12);
+		wfx->bitspersample = asf_byteio_getWLE(data + 14);
+		wfx->datalen = asf_byteio_getWLE(data + 16);
+		wfx->data = data + 18;
+
+		break;
+	}
+	case GUID_STREAM_TYPE_VIDEO:
+		sprop->type = ASF_STREAM_TYPE_VIDEO;
+		break;
+	case GUID_STREAM_TYPE_COMMAND:
+		sprop->type = ASF_STREAM_TYPE_COMMAND;
+		break;
+	default:
+		sprop->type = ASF_STREAM_TYPE_UNKNOWN;
+		break;
+	}
+
+	return 0;
+}
+
 int
 asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 {
@@ -79,39 +129,36 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 
 				streamprop = 1;
 				flags = asf_byteio_getWLE(current->data + 48);
+
 				if (file->streams[flags & 0x7f].type) {
 					/* only one stream object per stream allowed */
 					return ASF_ERROR_INVALID_OBJECT;
 				} else {
 					guid_t guid;
 					guid_type_t type;
-					asf_stream_type_t *stype;
+					asf_stream_properties_t *sprop;
+					uint32_t datalen;
+					uint8_t *data;
+					int ret;
 
-					stype = file->streams + (flags & 0x7f);
+					sprop = file->streams + (flags & 0x7f);
 
 					asf_byteio_getGUID(&guid, current->data);
 					type = asf_guid_get_stream_type(&guid);
 
-					switch (type) {
-					case GUID_STREAM_TYPE_AUDIO:
-						stype->type = ASF_STREAM_TYPE_AUDIO;
-						break;
-					case GUID_STREAM_TYPE_VIDEO:
-						stype->type = ASF_STREAM_TYPE_VIDEO;
-						break;
-					case GUID_STREAM_TYPE_COMMAND:
-						stype->type = ASF_STREAM_TYPE_COMMAND;
-						break;
-					default:
-						stype->type = ASF_STREAM_TYPE_UNKNOWN;
-						break;
+					datalen = asf_byteio_getDWLE(current->data + 40);
+					if (datalen > size - 54) {
+						return ASF_ERROR_INVALID_LENGTH;
 					}
+					data = current->data + 54;
 
-					stype->datalen = asf_byteio_getDWLE(current->data + 40);
-					if (stype->datalen) {
-						stype->data = current->data + 54;
-					} else {
-						stype->data = NULL;
+					ret = asf_parse_header_stream_properties(sprop,
+					                                         type,
+					                                         data,
+					                                         datalen);
+
+					if (ret < 0) {
+						return ret;
 					}
 				}
 				break;

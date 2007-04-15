@@ -55,8 +55,10 @@ asf_open_cb(asf_stream_t *stream)
 	file->data = NULL;
 	file->index = NULL;
 
-	for (i = 0; i < ASF_MAX_STREAMS; i++)
+	for (i=0; i < ASF_MAX_STREAMS; i++) {
 		file->streams[i].type = ASF_STREAM_TYPE_NONE;
+		file->streams[i].properties = NULL;
+	}
 
 	return file;
 }
@@ -139,6 +141,29 @@ asf_init(asf_file_t *file)
 	}
 
 	return 0;
+}
+
+void
+asf_close(asf_file_t *file)
+{
+	int i;
+
+	if (file) {
+		asf_header_destroy(file->header);
+		free(file->data);
+		if (file->index)
+			free(file->index->entries);
+		free(file->index);
+
+		if (file->filename)
+			fclose(file->stream.opaque);
+
+		for (i=0; i < ASF_MAX_STREAMS; i++) {
+			free(file->streams[i].properties);
+		}
+
+		free(file);
+	}
 }
 
 asf_packet_t *
@@ -255,24 +280,6 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 	return new_msec;
 }
 
-void
-asf_close(asf_file_t *file)
-{
-	if (file) {
-		asf_header_destroy(file->header);
-		free(file->data);
-		if (file->index)
-			free(file->index->entries);
-		free(file->index);
-
-		if (file->filename)
-			fclose(file->stream.opaque);
-
-		free(file);
-	}
-}
-
-
 asf_metadata_t *
 asf_get_metadata(asf_file_t *file)
 {
@@ -288,8 +295,8 @@ asf_free_metadata(asf_metadata_t *metadata)
 	asf_header_metadata_destroy(metadata);
 }
 
-asf_stream_type_t
-*asf_get_stream_type(asf_file_t *file, uint8_t track) {
+asf_stream_properties_t
+*asf_get_stream_properties(asf_file_t *file, uint8_t track) {
 	if (!file || track >= ASF_MAX_STREAMS)
 		return NULL;
 
