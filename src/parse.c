@@ -145,7 +145,7 @@ asf_parse_header(asf_file_t *file)
 		int i;
 
 		header->datalen = header->size - 30;
-		header->data = malloc(header->datalen);
+		header->data = malloc(header->datalen * sizeof(uint8_t));
 		if (!header->data) {
 			return ASF_ERROR_OUTOFMEM;
 		}
