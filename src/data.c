@@ -282,8 +282,16 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	}
 	read += tmp;
 
-	/* this is really idiotic, if packet length is smaller than packet size,
-	 * we need to manually add the additional bytes into padding length */
+	/* this is really idiotic, packet length can (and often will) be
+	 * undefined and we just have to use the header packet size as the size
+	 * value */
+	if (!((packet_flags >> 5) & 0x03)) {
+		packet->length = file->packet_size;
+	}
+	
+	/* this is also really idiotic, if packet length is smaller than packet
+	 * size, we need to manually add the additional bytes into padding length
+	 */
 	if (packet->length < file->packet_size) {
 		packet->padding_length += file->packet_size - packet->length;
 		packet->length = file->packet_size;
