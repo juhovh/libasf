@@ -63,8 +63,6 @@ struct asf_object_index_s {
 };
 typedef struct asf_object_index_s asf_object_index_t;
 
-#define ASF_MAX_STREAMS 128
-
 #define ASF_FLAG_BROADCAST 1
 #define ASF_FLAG_SEEKABLE  2
 

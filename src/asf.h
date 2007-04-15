@@ -79,6 +79,8 @@ struct asf_packet_s {
 };
 typedef struct asf_packet_s asf_packet_t;
 
+#define ASF_MAX_STREAMS 128
+
 enum asf_stream_type_e {
 	ASF_STREAM_TYPE_NONE     = 0x00,
 	ASF_STREAM_TYPE_AUDIO    = 0x01,
