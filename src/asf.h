@@ -19,18 +19,6 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 
-struct asf_waveformatex_s {
-	uint16_t codec_id;
-	uint16_t channels;
-	uint32_t rate;
-	uint32_t bitrate;
-	uint16_t blockalign;
-	uint16_t bitspersample;
-	uint16_t datalen;
-	uint8_t *data;
-};
-typedef struct asf_waveformatex_s asf_waveformatex_t;
-
 struct asf_stream_s {
 	int32_t (*read)(void *opaque, void *buffer, int32_t size);
 	int32_t (*write)(void *opaque, void *buffer, int32_t size);
@@ -99,6 +87,34 @@ enum asf_stream_type_e {
 	ASF_STREAM_TYPE_UNKNOWN  = 0xff
 };
 typedef enum asf_stream_type_e asf_stream_type_t;
+
+struct asf_waveformatex_s {
+	uint16_t codec_id;
+	uint16_t channels;
+	uint32_t rate;
+	uint32_t bitrate;
+	uint16_t blockalign;
+	uint16_t bitspersample;
+	uint16_t datalen;
+	uint8_t *data;
+};
+typedef struct asf_waveformatex_s asf_waveformatex_t;
+
+struct asf_bitmapinfoheader_s {
+	uint32_t data_size;
+	uint32_t width;
+	uint32_t height;
+	uint16_t reserved;
+	uint16_t bpp;
+	uint32_t codec;
+	uint32_t image_size;
+	uint32_t hppm;
+	uint32_t vppm;
+	uint32_t colors;
+	uint32_t important_colors;
+	uint8_t *data;
+};
+typedef struct asf_bitmapinfoheader_s asf_bitmapinfoheader_t;
 
 struct asf_stream_properties_s {
 	asf_stream_type_t type;
