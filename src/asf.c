@@ -334,10 +334,56 @@ asf_get_stream_count(asf_file_t *file)
 }
 
 asf_stream_properties_t *
-asf_get_stream_properties(asf_file_t *file, uint8_t track) {
+asf_get_stream_properties(asf_file_t *file, uint8_t track)
+{
 	if (!file || track >= ASF_MAX_STREAMS)
 		return NULL;
 
 	return &file->streams[track];
+}
+
+uint64_t
+asf_get_file_size(asf_file_t *file)
+{
+	if (!file)
+		return 0;
+
+	return file->file_size;
+}
+
+uint64_t
+asf_get_creation_date(asf_file_t *file)
+{
+	if (!file)
+		return 0;
+
+	return file->creation_date;
+}
+
+uint64_t
+asf_get_data_packets(asf_file_t *file)
+{
+	if (!file)
+		return 0;
+
+	return file->data_packets_count;
+}
+
+uint64_t
+asf_get_duration(asf_file_t *file)
+{
+	if (!file)
+		return 0;
+
+	return file->play_duration;
+}
+
+uint32_t
+asf_get_max_bitrate(asf_file_t *file)
+{
+	if (!file)
+		return 0;
+
+	return file->max_bitrate;
 }
 

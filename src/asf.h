@@ -170,10 +170,10 @@ void asf_free_metadata(asf_metadata_t *metadata);
 uint8_t asf_get_stream_count(asf_file_t *file);
 asf_stream_properties_t *asf_get_stream_properties(asf_file_t *file, uint8_t track);
 
-uint64_t asf_file_get_file_size(asf_file_t *file);
-uint64_t asf_file_get_creation_date(asf_file_t *file);
-uint64_t asf_file_get_data_packets(asf_file_t *file);
-uint64_t asf_file_get_duration(asf_file_t *file);
-uint32_t asf_file_get_max_bitrate(asf_file_t *file);
+uint64_t asf_get_file_size(asf_file_t *file);
+uint64_t asf_get_creation_date(asf_file_t *file);
+uint64_t asf_get_data_packets(asf_file_t *file);
+uint64_t asf_get_duration(asf_file_t *file);
+uint32_t asf_get_max_bitrate(asf_file_t *file);
 
 #endif
