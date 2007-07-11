@@ -17,7 +17,6 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "asf.h"
@@ -25,6 +24,7 @@
 #include "byteio.h"
 #include "data.h"
 #include "parse.h"
+#include "debug.h"
 
 #define GETLEN2b(bits) (((bits) == 0x03) ? 4 : bits)
 
@@ -208,11 +208,9 @@ asf_data_read_payloads(asf_packet_t *packet,
 		}
 		skip += pl.datalen;
 
-#ifdef DEBUG
-		printf("payload(%d/%d) stream: %d, object: %d, offset: %d, pts: %d, datalen: %d\n",
-		       i+1, packet->payload_count, pl.stream_number, pl.media_object_number,
-		       pl.media_object_offset, pl.pts, pl.datalen);
-#endif
+		debug_printf("payload(%d/%d) stream: %d, object: %d, offset: %d, pts: %d, datalen: %d\n",
+		             i+1, packet->payload_count, pl.stream_number, pl.media_object_number,
+		             pl.media_object_offset, pl.pts, pl.datalen);
 	}
 
 	return skip;
@@ -372,11 +370,9 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	}
 	read += tmp;
 
-#ifdef DEBUG
-	printf("packet read, eclen: %d, length: %d, padding: %d, time %d, duration: %d, payloads: %d\n",
-	       packet->ec_length, packet->length, packet->padding_length, packet->send_time,
-	       packet->duration, packet->payload_count);
-#endif
+	debug_printf("packet read, eclen: %d, length: %d, padding: %d, time %d, duration: %d, payloads: %d\n",
+	             packet->ec_length, packet->length, packet->padding_length, packet->send_time,
+	             packet->duration, packet->payload_count);
 
 	return read;
 }

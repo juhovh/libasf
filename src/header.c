@@ -406,7 +406,14 @@ asf_header_get_metadata(asf_object_header_t *header)
 		ret->extended_count = asf_byteio_getWLE(current->data);
 		ret->extended = calloc(ret->extended_count, sizeof(asf_metadata_entry_t));
 		if (!ret->extended) {
-			/* FIXME: cleanup */
+			/* Clean up the already allocated parts and return */
+			free(ret->title);
+			free(ret->artist);
+			free(ret->copyright);
+			free(ret->description);
+			free(ret->rating);
+			free(ret);
+
 			return NULL;
 		}
 

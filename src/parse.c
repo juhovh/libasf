@@ -16,7 +16,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,6 +25,7 @@
 #include "utf.h"
 #include "header.h"
 #include "guid.h"
+#include "debug.h"
 
 
 static void
@@ -39,12 +39,10 @@ asf_parse_read_object(asf_object_t *obj, uint8_t *data)
 	obj->next = NULL;
 
 	if (obj->type == GUID_UNKNOWN) {
-#ifdef DEBUG
-		printf("unknown object: %x-%x-%x-%02x%02x%02x%02x%02x%02x%02x%02x, %ld bytes\n",
-			obj->guid.v1, obj->guid.v2, obj->guid.v3, obj->guid.v4[0],
-			obj->guid.v4[1], obj->guid.v4[2], obj->guid.v4[3], obj->guid.v4[4],
-			obj->guid.v4[5], obj->guid.v4[6], obj->guid.v4[7], (long) obj->size);
-#endif
+		debug_printf("unknown object: %x-%x-%x-%02x%02x%02x%02x%02x%02x%02x%02x, %ld bytes\n",
+		             obj->guid.v1, obj->guid.v2, obj->guid.v3, obj->guid.v4[0],
+		             obj->guid.v4[1], obj->guid.v4[2], obj->guid.v4[3], obj->guid.v4[4],
+		             obj->guid.v4[5], obj->guid.v4[6], obj->guid.v4[7], (long) obj->size);
 	}
 }
 
@@ -69,9 +67,8 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 	}
 	header->data = buf + 46;
 
-#ifdef DEBUG
-	printf("parsing header extension subobjects\n");
-#endif
+	debug_printf("parsing header extension subobjects\n");
+
 	datalen = header->datalen;
 	data = header->data;
 	while (datalen > 0) {
@@ -112,9 +109,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 		return ASF_ERROR_INVALID_LENGTH;
 	}
 
-#ifdef DEBUG
-	printf("header extension subobjects parsed successfully\n");
-#endif
+	debug_printf("header extension subobjects parsed successfully\n");
 
 	return header->size;;
 }
@@ -171,9 +166,8 @@ asf_parse_header(asf_file_t *file)
 			return tmp;
 		}
 
-#ifdef DEBUG
-		printf("starting to read subobjects\n");
-#endif
+		debug_printf("starting to read subobjects\n");
+
 		datalen = header->datalen;
 		data = header->data;
 		for (i=0; i<header->subobjects; i++) {
@@ -233,9 +227,7 @@ asf_parse_header(asf_file_t *file)
 			return ASF_ERROR_INVALID_VALUE;
 		}
 
-#ifdef DEBUG
-		printf("%d subobjects read successfully\n", i);
-#endif
+		debug_printf("%d subobjects read successfully\n", i);
 	}
 
 	tmp = asf_parse_header_validate(file, file->header);
@@ -243,9 +235,8 @@ asf_parse_header(asf_file_t *file)
 		/* header read ok but doesn't validate correctly */
 		return tmp;
 	}
-#ifdef DEBUG
-	printf("header validated correctly\n");
-#endif
+
+	debug_printf("header validated correctly\n");
 
 	return header->size;
 }

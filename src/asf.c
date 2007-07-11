@@ -26,6 +26,7 @@
 #include "header.h"
 #include "parse.h"
 #include "data.h"
+#include "debug.h"
 
 asf_file_t *
 asf_open_file(const char *filename)
@@ -90,9 +91,7 @@ asf_init(asf_file_t *file)
 
 	tmp = asf_parse_header(file);
 	if (tmp < 0) {
-#ifdef DEBUG
-		printf("error parsing header: %d\n", tmp);
-#endif
+		debug_printf("error parsing header: %d\n", tmp);
 		return tmp;
 	}
 	file->position += tmp;
@@ -100,9 +99,7 @@ asf_init(asf_file_t *file)
 
 	tmp = asf_parse_data(file);
 	if (tmp < 0) {
-#ifdef DEBUG
-		printf("error parsing data object: %d\n", tmp);
-#endif
+		debug_printf("error parsing data object: %d\n", tmp);
 		return tmp;
 	}
 	file->position += tmp;
@@ -123,9 +120,7 @@ asf_init(asf_file_t *file)
 
 			tmp = asf_parse_index(file);
 			if (tmp < 0) {
-#ifdef DEBUG
-				printf("Error finding index object! %d\n", tmp);
-#endif
+				debug_printf("Error finding index object! %d\n", tmp);
 				break;
 			}
 
@@ -135,9 +130,7 @@ asf_init(asf_file_t *file)
 		}
 
 		if (!file->index) {
-#ifdef DEBUG
-			printf("Couldn't find an index object\n");
-#endif
+			debug_printf("Couldn't find an index object\n");
 			file->index_position = 0;
 		}
 
@@ -151,9 +144,7 @@ asf_init(asf_file_t *file)
 
 	for (tmp = 0; tmp < ASF_MAX_STREAMS; tmp++) {
 		if (file->streams[tmp].type != ASF_STREAM_TYPE_NONE) {
-#ifdef DEBUG
-			printf("stream %d of type %d found!\n", tmp, file->streams[tmp].type);
-#endif
+			debug_printf("stream %d of type %d found!\n", tmp, file->streams[tmp].type);
 		}
 	}
 
@@ -297,9 +288,7 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 	file->position = new_position;
 	file->packet = packet;
 
-#ifdef DEBUG
-	printf("requested a seek to %d, seeked to %d\n", (int) msec, (int) new_msec);
-#endif
+	debug_printf("requested a seek to %d, seeked to %d\n", (int) msec, (int) new_msec);
 
 	return new_msec;
 }
