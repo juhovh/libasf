@@ -366,10 +366,11 @@ asf_header_get_metadata(asf_object_header_t *header)
 		uint16_t strlen;
 		int i, read = 0;
 
-		/* FIXME: better error handling */
+		/* The validity of the object is already checked so we can assume
+		 * there's always enough data to read and there's no overflows */
 		for (i=0; i<5; i++) {
 			strlen = asf_byteio_getWLE(current->data + i*2);
-			if (strlen == 0)
+			if (!strlen)
 				continue;
 
 			str = asf_utf8_from_utf16le(current->data + 10 + read, strlen);

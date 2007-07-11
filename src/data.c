@@ -319,6 +319,11 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 		return ASF_ERROR_INVALID_LENGTH;
 	}
 
+	if (packet->length < read) {
+		/* header exceeded packet size, invalid file */
+		return ASF_ERROR_INVALID_LENGTH;
+	}
+
 	/* check if we have multiple payloads */
 	if (packet_flags & 0x01) {
 		if ((tmp = asf_byteio_readbyte(stream)) < 0) {
@@ -331,12 +336,6 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	} else {
 		packet->payload_count = 1;
 		payload_length_type = 0x02; /* not used */
-	}
-
-	if (packet->length < read) {
-		/* header exceeded packet size, invalid file */
-		/* FIXME: should this be checked earlier? */
-		return ASF_ERROR_INVALID_LENGTH;
 	}
 
 	packet->datalen = packet->length - read;
