@@ -91,7 +91,7 @@ asf_init(asf_file_t *file)
 
 	tmp = asf_parse_header(file);
 	if (tmp < 0) {
-		debug_printf("error parsing header: %d\n", tmp);
+		debug_printf("error parsing header: %d", tmp);
 		return tmp;
 	}
 	file->position += tmp;
@@ -99,7 +99,7 @@ asf_init(asf_file_t *file)
 
 	tmp = asf_parse_data(file);
 	if (tmp < 0) {
-		debug_printf("error parsing data object: %d\n", tmp);
+		debug_printf("error parsing data object: %d", tmp);
 		return tmp;
 	}
 	file->position += tmp;
@@ -120,7 +120,7 @@ asf_init(asf_file_t *file)
 
 			tmp = asf_parse_index(file);
 			if (tmp < 0) {
-				debug_printf("Error finding index object! %d\n", tmp);
+				debug_printf("Error finding index object! %d", tmp);
 				break;
 			}
 
@@ -130,7 +130,7 @@ asf_init(asf_file_t *file)
 		}
 
 		if (!file->index) {
-			debug_printf("Couldn't find an index object\n");
+			debug_printf("Couldn't find an index object");
 			file->index_position = 0;
 		}
 
@@ -144,7 +144,7 @@ asf_init(asf_file_t *file)
 
 	for (tmp = 0; tmp < ASF_MAX_STREAMS; tmp++) {
 		if (file->streams[tmp].type != ASF_STREAM_TYPE_NONE) {
-			debug_printf("stream %d of type %d found!\n", tmp, file->streams[tmp].type);
+			debug_printf("stream %d of type %d found!", tmp, file->streams[tmp].type);
 		}
 	}
 
@@ -288,7 +288,7 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 	file->position = new_position;
 	file->packet = packet;
 
-	debug_printf("requested a seek to %d, seeked to %d\n", (int) msec, (int) new_msec);
+	debug_printf("requested a seek to %d, seeked to %d", (int) msec, (int) new_msec);
 
 	return new_msec;
 }

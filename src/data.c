@@ -208,7 +208,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 		}
 		skip += pl.datalen;
 
-		debug_printf("payload(%d/%d) stream: %d, object: %d, offset: %d, pts: %d, datalen: %d\n",
+		debug_printf("payload(%d/%d) stream: %d, object: %d, offset: %d, pts: %d, datalen: %d",
 		             i+1, packet->payload_count, pl.stream_number, pl.media_object_number,
 		             pl.media_object_offset, pl.pts, pl.datalen);
 	}
@@ -370,7 +370,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	}
 	read += tmp;
 
-	debug_printf("packet read, eclen: %d, length: %d, padding: %d, time %d, duration: %d, payloads: %d\n",
+	debug_printf("packet read, eclen: %d, length: %d, padding: %d, time %d, duration: %d, payloads: %d",
 	             packet->ec_length, packet->length, packet->padding_length, packet->send_time,
 	             packet->duration, packet->payload_count);
 

@@ -39,7 +39,7 @@ asf_parse_read_object(asf_object_t *obj, uint8_t *data)
 	obj->next = NULL;
 
 	if (obj->type == GUID_UNKNOWN) {
-		debug_printf("unknown object: %x-%x-%x-%02x%02x%02x%02x%02x%02x%02x%02x, %ld bytes\n",
+		debug_printf("unknown object: %x-%x-%x-%02x%02x%02x%02x%02x%02x%02x%02x, %ld bytes",
 		             obj->guid.v1, obj->guid.v2, obj->guid.v3, obj->guid.v4[0],
 		             obj->guid.v4[1], obj->guid.v4[2], obj->guid.v4[3], obj->guid.v4[4],
 		             obj->guid.v4[5], obj->guid.v4[6], obj->guid.v4[7], (long) obj->size);
@@ -67,7 +67,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 	}
 	header->data = buf + 46;
 
-	debug_printf("parsing header extension subobjects\n");
+	debug_printf("parsing header extension subobjects");
 
 	datalen = header->datalen;
 	data = header->data;
@@ -109,7 +109,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 		return ASF_ERROR_INVALID_LENGTH;
 	}
 
-	debug_printf("header extension subobjects parsed successfully\n");
+	debug_printf("header extension subobjects parsed successfully");
 
 	return header->size;;
 }
@@ -166,7 +166,7 @@ asf_parse_header(asf_file_t *file)
 			return tmp;
 		}
 
-		debug_printf("starting to read subobjects\n");
+		debug_printf("starting to read subobjects");
 
 		datalen = header->datalen;
 		data = header->data;
@@ -227,7 +227,7 @@ asf_parse_header(asf_file_t *file)
 			return ASF_ERROR_INVALID_VALUE;
 		}
 
-		debug_printf("%d subobjects read successfully\n", i);
+		debug_printf("%d subobjects read successfully", i);
 	}
 
 	tmp = asf_parse_header_validate(file, file->header);
@@ -236,7 +236,7 @@ asf_parse_header(asf_file_t *file)
 		return tmp;
 	}
 
-	debug_printf("header validated correctly\n");
+	debug_printf("header validated correctly");
 
 	return header->size;
 }

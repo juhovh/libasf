@@ -28,5 +28,6 @@ debug_printf(char *fmt, ...)
 	va_start(argp, fmt);
 	vfprintf(stderr, fmt, argp);
 	va_end(argp);
+	fprintf(stderr, "\n");
 #endif
 }
