@@ -19,6 +19,24 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-void debug_printf(char *fmt, ...);
+#include <stdio.h>
+#include <stdarg.h>
+
+#ifdef __GNUC__
+# define INLINE static __inline__
+#else
+# define INLINE
+#endif
+
+INLINE void
+debug_printf(char *fmt, ...)
+{
+	va_list argp;
+
+	va_start(argp, fmt);
+	vfprintf(stderr, fmt, argp);
+	va_end(argp);
+	fprintf(stderr, "\n");
+}
 
 #endif
