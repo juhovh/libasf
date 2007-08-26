@@ -3,5 +3,10 @@ Authors:
 --------
 
 - All base code written by Juho Vähä-Herttua.
-- VLC libasf code mainly written by Laurent Aimar used as documentation.
+- VLC libasf code mainly written by Laurent Aimar used as documentation and reference.
+
+Contributors:
+-------------
+
+- Patch for double free crash from Anders Waldenborg.
 
