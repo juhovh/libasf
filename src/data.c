@@ -232,7 +232,7 @@ asf_data_init_packet(asf_packet_t *packet)
 	packet->payloads = NULL;
 	packet->payloads_size = 0;
 
-	packet->datalen = 0;
+	packet->payload_data_len = 0;
 	packet->payload_data = NULL;
 	packet->payload_data_size = 0;
 }
@@ -336,7 +336,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 		payload_length_type = 0x02; /* not used */
 	}
 
-	packet->datalen = packet->length - read;
+	packet->payload_data_len = packet->length - read;
 
 	if (packet->payload_count > packet->payloads_size) {
 		tmpptr = realloc(packet->payloads,
@@ -347,9 +347,9 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 		packet->payloads = tmpptr;
 		packet->payloads_size = packet->payload_count;
 	}
-	if (packet->datalen > packet->payload_data_size) {
+	if (packet->payload_data_len > packet->payload_data_size) {
 		tmpptr = realloc(packet->payload_data,
-		                 packet->datalen);
+		                 packet->payload_data_len);
 		if (!tmpptr) {
 			return ASF_ERROR_OUTOFMEM;
 		}
@@ -357,14 +357,14 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 		packet->payload_data_size = packet->payload_count;
 	}
 
-	if ((tmp = asf_byteio_read(packet->payload_data, packet->datalen, stream)) < 0) {
+	if ((tmp = asf_byteio_read(packet->payload_data, packet->payload_data_len, stream)) < 0) {
 		return tmp;
 	}
 
 	tmp = asf_data_read_payloads(packet, file->preroll, packet_flags & 0x01,
 	                             payload_length_type, packet_property,
 	                             packet->payload_data,
-	                             packet->datalen - packet->padding_length);
+	                             packet->payload_data_len - packet->padding_length);
 	if (tmp < 0) {
 		return tmp;
 	}

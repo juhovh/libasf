@@ -90,7 +90,7 @@ struct asf_packet_s {
 	asf_payload_t *payloads;
 	uint16_t payloads_size;
 
-	uint32_t datalen;
+	uint32_t payload_data_len;
 	uint8_t *payload_data;
 	uint32_t payload_data_size;
 };
