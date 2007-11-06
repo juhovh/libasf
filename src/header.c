@@ -380,7 +380,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 					flags = asf_byteio_getWLE(data + 72);
 
 					if ((flags & 0x7f) != stream ||
-					    file->streams[flags & 0x7f].type) {
+					    file->streams[stream].type) {
 						/* only one stream object per stream allowed and
 						 * stream ids have to match with both objects*/
 						return ASF_ERROR_INVALID_OBJECT;
@@ -388,7 +388,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 						asf_stream_properties_t *sprop;
 						int ret;
 
-						sprop = file->streams + (flags & 0x7f);
+						sprop = file->streams + stream;
 
 						ret = asf_parse_header_stream_properties(sprop,
 											 data + 24,
@@ -429,7 +429,9 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 	return 1;
 }
 
-
+/**
+ * Destroy the header and all subobjects
+ */
 void
 asf_header_destroy(asf_object_header_t *header)
 {

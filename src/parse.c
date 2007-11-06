@@ -146,7 +146,7 @@ asf_parse_header(asf_file_t *file)
 	stream = &file->stream;
 
 	/* object minimum is 24 bytes and header needs to have
-         * the subobject count field and two reserved fields */
+	 * the subobject count field and two reserved fields */
 	tmp = asf_byteio_read(hdata, 30, stream);
 	if (tmp < 0) {
 		/* not enough data to read the header object */
