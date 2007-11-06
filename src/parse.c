@@ -364,8 +364,7 @@ asf_parse_index(asf_file_t *file)
 	}
 
 	/* allocate the index object */
-	file->index = malloc(sizeof(asf_object_index_t));
-	index = file->index;
+	index = malloc(sizeof(asf_object_index_t));
 	if (!index) {
 		return ASF_ERROR_OUTOFMEM;
 	}
@@ -373,16 +372,15 @@ asf_parse_index(asf_file_t *file)
 	asf_parse_read_object((asf_object_t *) index, idata);
 	if (index->type != GUID_INDEX) {
 		tmp = index->size;
-
 		free(index);
-		file->index = NULL;
 
-		/* The guid type was wrong, just return the bytes to skip now */
+		/* The guid type was wrong, just return the bytes to skip */
 		return tmp;
 	}
 
 	if (index->size < 56) {
 		/* invalid size for index object */
+		free(index);
 		return ASF_ERROR_OBJECT_SIZE;
 	}
 
@@ -392,6 +390,7 @@ asf_parse_index(asf_file_t *file)
 	index->entry_count = asf_byteio_getDWLE(idata + 52);
 
 	if (index->entry_count * 6 + 56 > index->size) {
+		free(index);
 		return ASF_ERROR_INVALID_LENGTH;
 	}
 
@@ -399,13 +398,11 @@ asf_parse_index(asf_file_t *file)
 	entry_data = malloc(entry_data_size * sizeof(uint8_t));
 	if (!entry_data) {
 		free(index);
-		file->index = NULL;
 		return ASF_ERROR_OUTOFMEM;
 	}
 	tmp = asf_byteio_read(entry_data, entry_data_size, stream);
 	if (tmp < 0) {
 		free(index);
-		file->index = NULL;
 		free(entry_data);
 		return tmp;
 	}
@@ -413,7 +410,6 @@ asf_parse_index(asf_file_t *file)
 	index->entries = malloc(index->entry_count * sizeof(asf_index_entry_t));
 	if (!index->entries) {
 		free(index);
-		file->index = NULL;
 		free(entry_data);
 		return ASF_ERROR_OUTOFMEM;
 	}
@@ -424,6 +420,7 @@ asf_parse_index(asf_file_t *file)
 	}
 
 	free(entry_data);
+	file->index = index;
 
 	return index->size;
 }
