@@ -50,38 +50,32 @@ asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 
 /**
  * Reads the stream properties object's data into the equivalent
- * data structure and stores it in stream properties structure
+ * data structure, and stores it in stream_properties_t structure
  * with the equivalent stream type. Needs the stream properties
- * object data.
+ * object data as its input.
  */
 static int
 asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
                                    uint8_t *objdata,
-                                   uint32_t objdatalen)
+                                   uint32_t objsize)
 {
 	guid_t guid;
 	guid_type_t type;
 	uint32_t datalen;
 	uint8_t *data;
 
+	if (objsize < 78) {
+		return ASF_ERROR_INVALID_LENGTH;
+	}
+
 	asf_byteio_getGUID(&guid, objdata);
-	if (asf_guid_get_type(&guid) != GUID_STREAM_PROPERTIES)
-		return ASF_ERROR_INVALID_OBJECT;
-	if (asf_byteio_getQWLE(objdata + 16) != objdatalen)
-		return ASF_ERROR_OBJECT_SIZE;
-
-	datalen = asf_byteio_getDWLE(objdata + 64);
-	if (datalen > objdatalen - 78) {
-		return ASF_ERROR_INVALID_LENGTH;
-	}
-	data = objdata + 78;
-
-	if (datalen < 16) {
-		return ASF_ERROR_INVALID_LENGTH;
-	}
-
-	asf_byteio_getGUID(&guid, data);
 	type = asf_guid_get_stream_type(&guid);
+
+	datalen = asf_byteio_getDWLE(objdata + 40);
+	if (datalen > objsize - 78) {
+		return ASF_ERROR_INVALID_LENGTH;
+	}
+	data = objdata + 54;
 
 	switch (type) {
 	case GUID_STREAM_TYPE_AUDIO:
@@ -368,13 +362,22 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				}
 
 				if (datalen > 0) {
+					guid_t guid;
+
 					debug_printf("hidden stream properties object found!");
 
 					/* this is almost same as in stream properties handler */
 					if (datalen < 78)
 						return ASF_ERROR_OBJECT_SIZE;
 
-					flags = asf_byteio_getWLE(current->data + 48);
+					/* check that we really have a stream properties object */
+					asf_byteio_getGUID(&guid, data);
+					if (asf_guid_get_type(&guid) != GUID_STREAM_PROPERTIES)
+						return ASF_ERROR_INVALID_OBJECT;
+					if (asf_byteio_getQWLE(data + 16) != datalen)
+						return ASF_ERROR_OBJECT_SIZE;
+
+					flags = asf_byteio_getWLE(data + 72);
 
 					if ((flags & 0x7f) != stream ||
 					    file->streams[flags & 0x7f].type) {
@@ -388,8 +391,8 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 						sprop = file->streams + (flags & 0x7f);
 
 						ret = asf_parse_header_stream_properties(sprop,
-											 current->data,
-											 size);
+											 data + 24,
+											 datalen);
 
 						if (ret < 0) {
 							return ret;
