@@ -27,6 +27,10 @@
 #include "guid.h"
 #include "byteio.h"
 
+/**
+ * Finds an object with the corresponding GUID type from header object. If
+ * not found, just returns NULL.
+ */
 static asf_object_t *
 asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 {
@@ -348,13 +352,19 @@ asf_header_destroy(asf_object_header_t *header)
 	free(header);
 }
 
-
+/**
+ * Allocates a metadata struct and parses the contents from
+ * the header object raw data. All strings are in UTF-8 encoded
+ * format. The returned struct needs to be freed using the
+ * asf_header_metadata_destroy function. Returns NULL on failure.
+ */
 asf_metadata_t *
 asf_header_get_metadata(asf_object_header_t *header)
 {
 	asf_object_t *current;
 	asf_metadata_t *ret;
 
+	/* allocate the metadata struct */
 	ret = calloc(1, sizeof(asf_metadata_t));
 	if (!ret) {
 		return NULL;
@@ -367,7 +377,7 @@ asf_header_get_metadata(asf_object_header_t *header)
 		int i, read = 0;
 
 		/* The validity of the object is already checked so we can assume
-		 * there's always enough data to read and there's no overflows */
+		 * there's always enough data to read and there are no overflows */
 		for (i=0; i<5; i++) {
 			strlen = asf_byteio_getWLE(current->data + i*2);
 			if (!strlen)
@@ -435,9 +445,11 @@ asf_header_get_metadata(asf_object_header_t *header)
 
 			switch (type) {
 			case 0:
+				/* type of the value is a string */
 				ret->extended[i].value = asf_utf8_from_utf16le(current->data + position, length);
 				break;
 			case 1:
+				/* type of the value is a data block */
 				ret->extended[i].value = malloc((length*2 + 1) * sizeof(char));
 				for (j=0; j<length; j++) {
 					static const char hex[16] = "0123456789ABCDEF";
@@ -447,11 +459,13 @@ asf_header_get_metadata(asf_object_header_t *header)
 				ret->extended[i].value[j*2] = '\0';
 				break;
 			case 2:
+				/* type of the value is a boolean */
 				ret->extended[i].value = malloc(6 * sizeof(char));
 				sprintf(ret->extended[i].value, "%s",
 				        *current->data ? "true" : "false");
 				break;
 			case 3:
+				/* type of the value is a signed 32-bit integer */
 				ret->extended[i].value = malloc(11 * sizeof(char));
 				sprintf(ret->extended[i].value, "%u",
 				        asf_byteio_getDWLE(current->data + position));
@@ -463,6 +477,7 @@ asf_header_get_metadata(asf_object_header_t *header)
 				        (uint32_t) asf_byteio_getQWLE(current->data + position));
 				break;
 			case 5:
+				/* type of the value is a signed 16-bit integer */
 				ret->extended[i].value = malloc(6 * sizeof(char));
 				sprintf(ret->extended[i].value, "%u",
 				        asf_byteio_getWLE(current->data + position));
@@ -479,6 +494,9 @@ asf_header_get_metadata(asf_object_header_t *header)
 	return ret;
 }
 
+/**
+ * Free the metadata struct and all fields it includes
+ */
 void
 asf_header_metadata_destroy(asf_metadata_t *metadata)
 {
