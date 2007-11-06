@@ -26,6 +26,7 @@
 #include "header.h"
 #include "guid.h"
 #include "byteio.h"
+#include "debug.h"
 
 /**
  * Finds an object with the corresponding GUID type from header object. If
@@ -47,12 +48,41 @@ asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 	return NULL;
 }
 
+/**
+ * Reads the stream properties object's data into the equivalent
+ * data structure and stores it in stream properties structure
+ * with the equivalent stream type. Needs the stream properties
+ * object data.
+ */
 static int
 asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
-                                   guid_type_t type,
-                                   uint8_t *data,
-                                   uint32_t datalen)
+                                   uint8_t *objdata,
+                                   uint32_t objdatalen)
 {
+	guid_t guid;
+	guid_type_t type;
+	uint32_t datalen;
+	uint8_t *data;
+
+	asf_byteio_getGUID(&guid, objdata);
+	if (asf_guid_get_type(&guid) != GUID_STREAM_PROPERTIES)
+		return ASF_ERROR_INVALID_OBJECT;
+	if (asf_byteio_getQWLE(objdata + 16) != objdatalen)
+		return ASF_ERROR_OBJECT_SIZE;
+
+	datalen = asf_byteio_getDWLE(objdata + 64);
+	if (datalen > objdatalen - 78) {
+		return ASF_ERROR_INVALID_LENGTH;
+	}
+	data = objdata + 78;
+
+	if (datalen < 16) {
+		return ASF_ERROR_INVALID_LENGTH;
+	}
+
+	asf_byteio_getGUID(&guid, data);
+	type = asf_guid_get_stream_type(&guid);
+
 	switch (type) {
 	case GUID_STREAM_TYPE_AUDIO:
 	{
@@ -67,7 +97,8 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 			return ASF_ERROR_INVALID_LENGTH;
 		}
 
-		sprop->properties = malloc(sizeof(asf_waveformatex_t));;
+		/* this should be freed in asf_close function */
+		sprop->properties = malloc(sizeof(asf_waveformatex_t));
 		if (!sprop->properties)
 			return ASF_ERROR_OUTOFMEM;
 
@@ -111,7 +142,8 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 			return ASF_ERROR_INVALID_VALUE;
 		}
 
-		sprop->properties = malloc(sizeof(asf_bitmapinfoheader_t));;
+		/* this should be freed in asf_close function */
+		sprop->properties = malloc(sizeof(asf_bitmapinfoheader_t));
 		if (!sprop->properties)
 			return ASF_ERROR_OUTOFMEM;
 
@@ -142,11 +174,18 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 	return 0;
 }
 
+/**
+ * Reads the file properties object contents to the asf_file_t structure,
+ * parses the useful values from stream properties object to the equivalent
+ * stream properties info structure and validates that all known header
+ * subobjects have only legal values.
+ */
 int
 asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 {
-	asf_object_t *current;
+	/* some flags for mandatory subobjects */
 	int fileprop = 0, streamprop = 0;
+	asf_object_t *current;
 
 	if (header->first) {
 		current = header->first;
@@ -200,28 +239,14 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 					/* only one stream object per stream allowed */
 					return ASF_ERROR_INVALID_OBJECT;
 				} else {
-					guid_t guid;
-					guid_type_t type;
 					asf_stream_properties_t *sprop;
-					uint32_t datalen;
-					uint8_t *data;
 					int ret;
 
 					sprop = file->streams + (flags & 0x7f);
 
-					asf_byteio_getGUID(&guid, current->data);
-					type = asf_guid_get_stream_type(&guid);
-
-					datalen = asf_byteio_getDWLE(current->data + 40);
-					if (datalen > size - 54) {
-						return ASF_ERROR_INVALID_LENGTH;
-					}
-					data = current->data + 54;
-
 					ret = asf_parse_header_stream_properties(sprop,
-					                                         type,
-					                                         data,
-					                                         datalen);
+					                                         current->data,
+					                                         size);
 
 					if (ret < 0) {
 						return ret;
@@ -291,10 +316,88 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 					return ASF_ERROR_OBJECT_SIZE;
 				break;
 			case GUID_EXTENDED_STREAM_PROPERTIES:
-				/* FIXME check for hidden stream properties object */
+			{
+				int stream, name_count, extsys_count;
+				uint32_t datalen;
+				uint8_t *data;
+				uint16_t flags;
+				int i;
+
 				if (size < 88)
 					return ASF_ERROR_OBJECT_SIZE;
+
+				stream = asf_byteio_getWLE(current->data + 48);
+				name_count = asf_byteio_getWLE(current->data + 60);
+				extsys_count = asf_byteio_getWLE(current->data + 62);
+
+				datalen = size - 88;
+				data = current->data + 64;
+
+				/* iterate through all name strings */
+				for (i=0; i<name_count; i++) {
+					uint16_t strlen;
+
+					if (datalen < 4)
+						return ASF_ERROR_INVALID_VALUE;
+
+					strlen = asf_byteio_getWLE(data + 2);
+					if (strlen > datalen) {
+						return ASF_ERROR_INVALID_LENGTH;
+					}
+
+					/* skip the current name string */
+					data += 4 + strlen;
+					datalen -= 4 + strlen;
+				}
+
+				/* iterate through all extension systems */
+				for (i=0; i<extsys_count; i++) {
+					uint32_t extsyslen;
+
+					if (datalen < 22)
+						return ASF_ERROR_INVALID_VALUE;
+
+					extsyslen = asf_byteio_getDWLE(data + 18);
+					if (extsyslen > datalen) {
+						return ASF_ERROR_INVALID_LENGTH;
+					}
+
+					/* skip the current extension system */
+					data += 22 + extsyslen;
+					datalen -= 22 + extsyslen;
+				}
+
+				if (datalen > 0) {
+					debug_printf("hidden stream properties object found!");
+
+					/* this is almost same as in stream properties handler */
+					if (datalen < 78)
+						return ASF_ERROR_OBJECT_SIZE;
+
+					flags = asf_byteio_getWLE(current->data + 48);
+
+					if ((flags & 0x7f) != stream ||
+					    file->streams[flags & 0x7f].type) {
+						/* only one stream object per stream allowed and
+						 * stream ids have to match with both objects*/
+						return ASF_ERROR_INVALID_OBJECT;
+					} else {
+						asf_stream_properties_t *sprop;
+						int ret;
+
+						sprop = file->streams + (flags & 0x7f);
+
+						ret = asf_parse_header_stream_properties(sprop,
+											 current->data,
+											 size);
+
+						if (ret < 0) {
+							return ret;
+						}
+					}
+				}
 				break;
+			}
 			case GUID_ADVANCED_MUTUAL_EXCLUSION:
 				if (size < 42)
 					return ASF_ERROR_OBJECT_SIZE;
