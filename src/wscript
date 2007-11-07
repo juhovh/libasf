@@ -1,0 +1,32 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Thomas Nagy, 2006 (ita)
+
+def build(bld):
+	obj = bld.create_obj('cc', 'shlib')
+	obj.source='''
+	asf.c
+	byteio.c
+	data.c
+	fileio.c
+	guid.c
+	header.c
+	parse.c
+	utf.c
+	'''
+#	obj.includes='. /usr/include'
+	obj.ccflags='-O0 -ansi -pedantic -Wall -Werror'
+	obj.target='asf'
+
+	obj = bld.create_obj('cc', 'program')
+	obj.source = 'example_program.c'
+	obj.uselib_local = 'asf'
+	obj.target = 'asftest'
+
+#def set_options(opt):
+#	# options defined if src/ was to be compiled as a standalone module
+#	opt.add_option('--meow', type='string', help='option hidden in the src module', dest='meow')
+
+#def configure(conf):
+#	print "sub-configuration file called (demo)"
+
