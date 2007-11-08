@@ -77,8 +77,23 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 	}
 	data = objdata + 54;
 
+	if (type == GUID_STREAM_TYPE_EXTENDED) {
+		/* FIXME: Need to find out what actually is here...
+		          but for now we can just skip the extended part */
+		if (datalen < 64)
+			return ASF_ERROR_INVALID_LENGTH;
+
+		data += 64;
+		datalen -= 64;
+
+		/* update the stream type with correct one */
+		asf_byteio_getGUID(&guid, objdata);
+		type = asf_guid_get_stream_type(&guid);
+	}
+
 	switch (type) {
 	case GUID_STREAM_TYPE_AUDIO:
+	case GUID_STREAM_TYPE_EXTENDED_AUDIO:
 	{
 		asf_waveformatex_t *wfx;
 
