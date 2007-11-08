@@ -121,6 +121,11 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 		wfx->datalen = asf_byteio_getWLE(data + 16);
 		wfx->data = data + 18;
 
+		if (wfx->datalen > datalen - 18) {
+			debug_printf("Invalid waveformatex data length, truncating!");
+			wfx->datalen = datalen - 18;
+		}
+
 		break;
 	}
 	case GUID_STREAM_TYPE_VIDEO:
@@ -169,6 +174,11 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 		bmih->colors = asf_byteio_getDWLE(data + 32);
 		bmih->important_colors = asf_byteio_getDWLE(data + 36);
 		bmih->data = data + 40;
+
+		if (bmih->data_size > datalen - 40) {
+			debug_printf("Invalid bitmapinfoheader data length, truncating!");
+			bmih->data_size = datalen - 40;
+		}
 
 		break;
 	}
