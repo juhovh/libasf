@@ -113,7 +113,7 @@ asf_init(asf_file_t *file)
 		seek_position = file->stream.seek(file->stream.opaque,
 		                                  file->index_position);
 
-		/* if first seek fails, we can recover and just ignore seeking */
+		/* if first seek fails, we can try to recover and just ignore seeking */
 		if (seek_position >= 0) {
 			while (seek_position == file->index_position &&
 			       file->index_position < file->file_size && !file->index) {
