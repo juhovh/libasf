@@ -22,5 +22,6 @@ def configure(conf):
 
 def build(bld):
 	# process subfolders from here
-	bld.add_subdirs('src')
+	bld.add_subdirs('src example')
+
 

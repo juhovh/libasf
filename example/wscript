@@ -3,22 +3,10 @@
 # Thomas Nagy, 2006 (ita)
 
 def build(bld):
-	obj = bld.create_obj('cc', 'shlib')
-	obj.source='''
-	asf.c
-	byteio.c
-	data.c
-	fileio.c
-	guid.c
-	header.c
-	parse.c
-	utf.c
-	'''
-	obj.ccflags='-DDEBUG -g -O0 -ansi -pedantic -Wall -Werror'
-	obj.target='asf'
-	obj.name='asflib'
-
-	install_files('PREFIX', 'include', 'asf.h')
+	obj = bld.create_obj('cc', 'program')
+	obj.source = 'asftest.c'
+	obj.uselib_local = 'asflib'
+	obj.target = 'asftest'
 
 #def set_options(opt):
 #	# options defined if src/ was to be compiled as a standalone module
