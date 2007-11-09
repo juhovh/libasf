@@ -175,9 +175,9 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 		bmih->important_colors = asf_byteio_getDWLE(data + 36);
 		bmih->data = data + 40;
 
-		if (bmih->data_size > datalen - 40) {
+		if (bmih->data_size > datalen) {
 			debug_printf("Invalid bitmapinfoheader data length, truncating!");
-			bmih->data_size = datalen - 40;
+			bmih->data_size = datalen;
 		}
 
 		break;
