@@ -51,7 +51,7 @@ asf_data_read_packet_data(asf_packet_t *packet, uint8_t flags, asf_stream_t *str
 	datap = data;
 	packet->length = GETVALUE2b((flags >> 5) & 0x03, datap);
 	datap += GETLEN2b((flags >> 5) & 0x03);
-	/* sequence value is not used */
+	/* sequence value should be never used anywhere */
 	GETVALUE2b((flags >> 1) & 0x03, datap);
 	datap += GETLEN2b((flags >> 1) & 0x03);
 	packet->padding_length = GETVALUE2b((flags >> 3) & 0x03, datap);
@@ -104,8 +104,8 @@ asf_data_read_payloads(asf_packet_t *packet,
 		uint8_t pts_delta = 0;
 		int compressed = 0;
 
-		/* FIXME: mark keyframe? */
 		pl.stream_number = data[skip] & 0x7f;
+		pl.key_frame = data[skip] & 0x80;
 		skip++;
 
 		tmp = asf_data_read_payload_data(&pl, flags, data + skip, datalen - skip);

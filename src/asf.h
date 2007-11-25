@@ -63,6 +63,8 @@ typedef struct asf_metadata_s asf_metadata_t;
 
 struct asf_payload_s {
 	uint8_t stream_number;
+	uint8_t key_frame;
+
 	uint32_t media_object_number;
 	uint32_t media_object_offset;
 
