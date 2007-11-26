@@ -271,18 +271,21 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 			return ASF_ERROR_SEEK;
 		}
 		packet = file->index->entries[index_entry].packet_index;
+
+		/* the correct msec time isn't known before reading the packet */
+		new_msec = msec;
 	} else {
 		/* convert msec into bytes per second and divide with packet_size */
 		packet = msec * file->max_bitrate / 8000 / file->packet_size;
+
+		/* calculate the resulting position in the audio stream */
+		new_msec = packet * file->packet_size * 8000 / file->max_bitrate;
 	}
 
 	/* calculate new position to be in the beginning of the current frame */
 	new_position = file->data->packets_position + packet * file->packet_size;
-	new_msec = packet * file->packet_size * 8000 / file->max_bitrate;
 
-	seek_position = file->stream.seek(file->stream.opaque,
-	                                  new_position);
-
+	seek_position = file->stream.seek(file->stream.opaque, new_position);
 	if (seek_position < 0 || seek_position != new_position) {
 		return ASF_ERROR_SEEK;
 	}
@@ -290,8 +293,6 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 	/* update current file position information */
 	file->position = new_position;
 	file->packet = packet;
-
-	debug_printf("requested a seek to %d, seeked to %d", (int) msec, (int) new_msec);
 
 	return new_msec;
 }

@@ -203,6 +203,10 @@ asf_data_read_payloads(asf_packet_t *packet,
 				pl.pts += pts_delta;
 				memcpy(&packet->payloads[i], &pl, sizeof(asf_payload_t));
 				i++;
+
+				debug_printf("payload(%d/%d) stream: %d, key frame: %d, object: %d, offset: %d, pts: %d, datalen: %d",
+					     i, packet->payload_count, pl.stream_number, (int) pl.key_frame, pl.media_object_number,
+					     pl.media_object_offset, pl.pts, pl.datalen);
 			}
 		} else {
 			pl.data = data + skip;
@@ -211,11 +215,11 @@ asf_data_read_payloads(asf_packet_t *packet,
 			/* update the skipped data amount and payload index */
 			skip += pl.datalen;
 			i++;
-		}
 
-		debug_printf("payload(%d/%d) stream: %d, object: %d, offset: %d, pts: %d, datalen: %d",
-		             i+1, packet->payload_count, pl.stream_number, pl.media_object_number,
-		             pl.media_object_offset, pl.pts, pl.datalen);
+			debug_printf("payload(%d/%d) stream: %d, key frame: %d, object: %d, offset: %d, pts: %d, datalen: %d",
+				     i, packet->payload_count, pl.stream_number, (int) pl.key_frame, pl.media_object_number,
+				     pl.media_object_offset, pl.pts, pl.datalen);
+		}
 	}
 
 	return skip;
