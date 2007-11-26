@@ -325,6 +325,16 @@ asf_get_stream_count(asf_file_t *file)
 	return ret;
 }
 
+int
+asf_is_broadcast(asf_file_t *file) {
+	return (file->flags & ASF_FLAG_BROADCAST);
+}
+
+int
+asf_is_seekable(asf_file_t *file) {
+	return (file->flags & ASF_FLAG_SEEKABLE);
+}
+
 asf_stream_properties_t *
 asf_get_stream_properties(asf_file_t *file, uint8_t track)
 {

@@ -112,18 +112,18 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 			return ASF_ERROR_OUTOFMEM;
 
 		wfx = sprop->properties;
-		wfx->codec_id = asf_byteio_getWLE(data);
-		wfx->channels = asf_byteio_getWLE(data + 2);
-		wfx->rate = asf_byteio_getDWLE(data + 4);
-		wfx->bitrate = asf_byteio_getDWLE(data + 8);
-		wfx->blockalign = asf_byteio_getWLE(data + 12);
-		wfx->bitspersample = asf_byteio_getWLE(data + 14);
-		wfx->datalen = asf_byteio_getWLE(data + 16);
+		wfx->wFormatTag = asf_byteio_getWLE(data);
+		wfx->nChannels = asf_byteio_getWLE(data + 2);
+		wfx->nSamplesPerSec = asf_byteio_getDWLE(data + 4);
+		wfx->nAvgBytesPerSec = asf_byteio_getDWLE(data + 8);
+		wfx->nBlockAlign = asf_byteio_getWLE(data + 12);
+		wfx->wBitsPerSample = asf_byteio_getWLE(data + 14);
+		wfx->cbSize = asf_byteio_getWLE(data + 16);
 		wfx->data = data + 18;
 
-		if (wfx->datalen > datalen - 18) {
+		if (wfx->cbSize > datalen - 18) {
 			debug_printf("Invalid waveformatex data length, truncating!");
-			wfx->datalen = datalen - 18;
+			wfx->cbSize = datalen - 18;
 		}
 
 		break;
@@ -162,22 +162,22 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 			return ASF_ERROR_OUTOFMEM;
 
 		bmih = sprop->properties;
-		bmih->data_size = asf_byteio_getDWLE(data);
-		bmih->width = asf_byteio_getDWLE(data + 4);
-		bmih->height = asf_byteio_getDWLE(data + 8);
-		bmih->reserved = asf_byteio_getDWLE(data + 12);
-		bmih->bpp = asf_byteio_getDWLE(data + 14);
-		bmih->codec = asf_byteio_getDWLE(data + 16);
-		bmih->image_size = asf_byteio_getDWLE(data + 20);
-		bmih->hppm = asf_byteio_getDWLE(data + 24);
-		bmih->vppm = asf_byteio_getDWLE(data + 28);
-		bmih->colors = asf_byteio_getDWLE(data + 32);
-		bmih->important_colors = asf_byteio_getDWLE(data + 36);
+		bmih->biSize = asf_byteio_getDWLE(data);
+		bmih->biWidth = asf_byteio_getDWLE(data + 4);
+		bmih->biHeight = asf_byteio_getDWLE(data + 8);
+		bmih->biPlanes = asf_byteio_getDWLE(data + 12);
+		bmih->biBitCount = asf_byteio_getDWLE(data + 14);
+		bmih->biCompression = asf_byteio_getDWLE(data + 16);
+		bmih->biSizeImage = asf_byteio_getDWLE(data + 20);
+		bmih->biXPelsPerMeter = asf_byteio_getDWLE(data + 24);
+		bmih->biYPelsPerMeter = asf_byteio_getDWLE(data + 28);
+		bmih->biClrUsed = asf_byteio_getDWLE(data + 32);
+		bmih->biClrImportant = asf_byteio_getDWLE(data + 36);
 		bmih->data = data + 40;
 
-		if (bmih->data_size > datalen) {
+		if (bmih->biSize > datalen) {
 			debug_printf("Invalid bitmapinfoheader data length, truncating!");
-			bmih->data_size = datalen;
+			bmih->biSize = datalen;
 		}
 
 		break;

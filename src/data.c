@@ -105,7 +105,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 		int compressed = 0;
 
 		pl.stream_number = data[skip] & 0x7f;
-		pl.key_frame = data[skip] & 0x80;
+		pl.key_frame = !!(data[skip] & 0x80);
 		skip++;
 
 		tmp = asf_data_read_payload_data(&pl, flags, data + skip, datalen - skip);
