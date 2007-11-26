@@ -21,7 +21,7 @@
 
 
 /* used int types for different platforms */
-#if defined (_WIN32) && !defined (__MINGW_H)
+#if !defined(__MINGW_H) && defined(_WIN32)
 typedef char int8_t;
 typedef unsigned char uint8_t;
 typedef short int16_t;
