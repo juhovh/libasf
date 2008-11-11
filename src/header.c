@@ -373,29 +373,27 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 			case GUID_STREAM_PROPERTIES:
 			{
 				uint16_t flags;
+				asf_stream_t *stream;
+				int ret;
 
 				if (size < 78)
 					return ASF_ERROR_OBJECT_SIZE;
 
 				streamprop = 1;
 				flags = asf_byteio_getWLE(current->data + 48);
+				stream = &file->streams[flags & 0x7f];
 
-				if (file->streams[flags & 0x7f].type) {
+				if (stream->type) {
 					/* only one stream object per stream allowed */
 					return ASF_ERROR_INVALID_OBJECT;
-				} else {
-					asf_stream_t *stream;
-					int ret;
+				}
 
-					stream = &file->streams[flags & 0x7f];
+				ret = asf_parse_header_stream_properties(stream,
+									 current->data,
+									 size);
 
-					ret = asf_parse_header_stream_properties(stream,
-					                                         current->data,
-					                                         size);
-
-					if (ret < 0) {
-						return ret;
-					}
+				if (ret < 0) {
+					return ret;
 				}
 				break;
 			}
