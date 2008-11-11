@@ -22,14 +22,15 @@
 #include "asf.h"
 #include "guid.h"
 
-/* DO NOT MODIFY THE FIRST 4 VARIABLES, BECAUSE THEY ARE
+/* DO NOT MODIFY THE FIRST 3 VARIABLES, BECAUSE THEY ARE
  * ALSO DEFINED IN asf.h HEADER AND WILL BREAK THINGS */
-#define ASF_OBJECT_COMMON      \
-	asf_guid_t   guid;     \
-	uint64_t     size;     \
-	uint64_t     datalen;  \
-	uint8_t      *data;    \
-	guid_type_t  type;     \
+#define ASF_OBJECT_COMMON        \
+	asf_guid_t   guid;       \
+	uint64_t     size;       \
+	uint8_t      *full_data; \
+	uint64_t     datalen;    \
+	uint8_t      *data;      \
+	guid_type_t  type;       \
 	struct asfint_object_s *next; 
 
 struct asfint_object_s {

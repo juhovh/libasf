@@ -214,7 +214,6 @@ enum asf_error_e {
 struct asf_object_s {
 	asf_guid_t   guid;
 	uint64_t     size;
-	uint64_t     datalen;
 	uint8_t      *data;
 };
 typedef struct asf_object_s asf_object_t;

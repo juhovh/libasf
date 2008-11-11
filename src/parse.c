@@ -39,6 +39,7 @@ asf_parse_read_object(asfint_object_t *obj, uint8_t *data)
 	asf_byteio_getGUID(&obj->guid, data);
 	obj->type = asf_guid_get_type(&obj->guid);
 	obj->size = asf_byteio_getQWLE(data + 16);
+	obj->full_data = data;
 	obj->datalen = 0;
 	obj->data = NULL;
 	obj->next = NULL;
