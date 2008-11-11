@@ -315,7 +315,7 @@ asf_free_metadata(asf_metadata_t *metadata)
 uint8_t
 asf_get_stream_count(asf_file_t *file)
 {
-	uint8_t ret;
+	uint8_t ret = 0;
 	int i;
 
 	for (i = 0; i < ASF_MAX_STREAMS; i++) {
