@@ -156,7 +156,7 @@ typedef enum asf_stream_type_e asf_stream_type_t;
 #define ASF_STREAM_FLAG_HIDDEN     0x0002
 #define ASF_STREAM_FLAG_EXTENDED   0x0004
 
-struct asf_stream_extprop_s {
+struct asf_stream_extended_s {
 	uint64_t start_time;
 	uint64_t end_time;
 	uint32_t data_bitrate;
