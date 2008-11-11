@@ -162,7 +162,7 @@ asf_close(asf_file_t *file)
 	int i;
 
 	if (file) {
-		asf_header_destroy(file->header);
+		asf_free_header(file->header);
 		free(file->data);
 		if (file->index)
 			free(file->index->entries);
@@ -173,6 +173,7 @@ asf_close(asf_file_t *file)
 
 		for (i=0; i < ASF_MAX_STREAMS; i++) {
 			free(file->streams[i].properties);
+			free(file->streams[i].extended);
 		}
 
 		free(file);
@@ -306,6 +307,16 @@ asf_header_get_metadata(asf_file_t *file)
 		return NULL;
 
 	return asf_header_metadata(file->header);
+}
+
+void
+asf_header_destroy(asf_file_t *file)
+{
+	if (!file)
+		return;
+
+	asf_free_header(file->header);
+	file->header = NULL;
 }
 
 void

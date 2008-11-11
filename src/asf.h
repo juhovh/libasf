@@ -239,6 +239,11 @@ asf_metadata_t *asf_header_get_metadata(asf_file_t *file);
 /* free metadata structure received from the library */
 void asf_metadata_destroy(asf_metadata_t *metadata);
 
+/* free all header information from the ASF file structure
+ * WARNING: after calling this function all asf_header_*
+ *          functions will return NULL or failure!!! */
+void asf_header_destroy(asf_file_t *file);
+
 
 /* calculate how many streams are available in current ASF file */
 uint8_t asf_get_stream_count(asf_file_t *file);
