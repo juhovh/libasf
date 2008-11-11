@@ -81,12 +81,12 @@ asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data)
 }
 
 int
-asf_byteio_readbyte(asf_stream_t *stream)
+asf_byteio_readbyte(asf_iostream_t *iostream)
 {
 	uint8_t byte;
 	int ret;
 
-	if ((ret = asf_byteio_read(&byte, 1, stream)) <= 0) {
+	if ((ret = asf_byteio_read(&byte, 1, iostream)) <= 0) {
 		return (ret == 0) ? ASF_ERROR_EOF : ASF_ERROR_IO;
 	}
 
@@ -94,15 +94,15 @@ asf_byteio_readbyte(asf_stream_t *stream)
 }
 
 int
-asf_byteio_read(uint8_t *data, int size, asf_stream_t *stream)
+asf_byteio_read(uint8_t *data, int size, asf_iostream_t *iostream)
 {
 	int read = 0, tmp;
 
-	if (!stream->read) {
+	if (!iostream->read) {
 		return ASF_ERROR_INTERNAL;
 	}
 
-	while ((tmp = stream->read(stream->opaque, data+read, size-read)) > 0) {
+	while ((tmp = iostream->read(iostream->opaque, data+read, size-read)) > 0) {
 		read += tmp;
 
 		if (read == size) {

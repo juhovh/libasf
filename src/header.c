@@ -50,12 +50,12 @@ asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 
 /**
  * Reads the stream properties object's data into the equivalent
- * data structure, and stores it in stream_properties_t structure
+ * data structure, and stores it in asf_stream_t structure
  * with the equivalent stream type. Needs the stream properties
  * object data as its input.
  */
 static int
-asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
+asf_parse_header_stream_properties(asf_stream_t *sprop,
                                    uint8_t *objdata,
                                    uint32_t objsize)
 {
@@ -258,12 +258,12 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 					/* only one stream object per stream allowed */
 					return ASF_ERROR_INVALID_OBJECT;
 				} else {
-					asf_stream_properties_t *sprop;
+					asf_stream_t *stream;
 					int ret;
 
-					sprop = file->streams + (flags & 0x7f);
+					stream = &file->streams[flags & 0x7f];
 
-					ret = asf_parse_header_stream_properties(sprop,
+					ret = asf_parse_header_stream_properties(stream,
 					                                         current->data,
 					                                         size);
 
@@ -336,7 +336,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				break;
 			case GUID_EXTENDED_STREAM_PROPERTIES:
 			{
-				int stream, name_count, extsys_count;
+				int stream_idx, name_count, extsys_count;
 				uint32_t datalen;
 				uint8_t *data;
 				uint16_t flags;
@@ -345,7 +345,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				if (size < 88)
 					return ASF_ERROR_OBJECT_SIZE;
 
-				stream = asf_byteio_getWLE(current->data + 48);
+				stream_idx = asf_byteio_getWLE(current->data + 48);
 				name_count = asf_byteio_getWLE(current->data + 60);
 				extsys_count = asf_byteio_getWLE(current->data + 62);
 
@@ -404,19 +404,19 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 
 					flags = asf_byteio_getWLE(data + 72);
 
-					if ((flags & 0x7f) != stream ||
-					    file->streams[stream].type) {
+					if ((flags & 0x7f) != stream_idx ||
+					    file->streams[stream_idx].type) {
 						/* only one stream object per stream allowed and
 						 * stream ids have to match with both objects*/
 						return ASF_ERROR_INVALID_OBJECT;
 					} else {
-						asf_stream_properties_t *sprop;
+						asf_stream_t *stream;
 						int ret;
 
-						sprop = file->streams + stream;
-						sprop->flags |= ASF_STREAM_FLAG_HIDDEN;
+						stream = &file->streams[stream_idx];
+						stream->flags |= ASF_STREAM_FLAG_HIDDEN;
 
-						ret = asf_parse_header_stream_properties(sprop,
+						ret = asf_parse_header_stream_properties(stream,
 						                                         data + 24,
 						                                         datalen);
 

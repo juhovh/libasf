@@ -36,7 +36,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 
-struct asf_stream_s {
+struct asf_iostream_s {
 	/* read function, returns -1 on error, 0 on EOF and read bytes
 	 * otherwise */
 	int32_t (*read)(void *opaque, void *buffer, int32_t size);
@@ -53,7 +53,7 @@ struct asf_stream_s {
 	 * callbacks */
 	void *opaque;
 };
-typedef struct asf_stream_s asf_stream_t;
+typedef struct asf_iostream_s asf_iostream_t;
 
 struct asf_metadata_entry_s {
 	char *key;	/* key of extended metadata entry */
@@ -173,9 +173,9 @@ struct asf_stream_extprop_s {
 	uint16_t stream_name_count;
 	uint16_t num_payload_ext;
 };
-typedef struct asf_stream_ext_properties_s asf_stream_ext_properties_t;
+typedef struct asf_stream_extended_s asf_stream_extended_t;
 
-struct asf_stream_properties_s {
+struct asf_stream_s {
 	asf_stream_type_t type;	/* type of this current stream */
 	uint16_t flags;         /* possible flags related to this stream */
 
@@ -185,9 +185,9 @@ struct asf_stream_properties_s {
 
 	/* pointer to extended properties of the stream if they specified
 	 * only available if ASF_STREAM_FLAG_EXTENDED flag is set, otherwise NULL */
-	asf_stream_ext_properties_t *ext_properties;
+	asf_stream_extended_t *extended;
 };
-typedef struct asf_stream_properties_s asf_stream_properties_t;
+typedef struct asf_stream_s asf_stream_t;
 
 typedef struct asf_file_s asf_file_t;
 
@@ -210,7 +210,7 @@ asf_file_t *asf_open_file(const char *filename);
 
 /* initialize the library using callbacks defined on a stream structure,
    the stream structure can be freed after calling this function */
-asf_file_t *asf_open_cb(asf_stream_t *stream);
+asf_file_t *asf_open_cb(asf_iostream_t *iostream);
 
 /* close the library handle and free all allocated memory */
 void asf_close(asf_file_t *file);
@@ -242,8 +242,8 @@ void asf_free_metadata(asf_metadata_t *metadata);
 /* calculate how many streams are available in current ASF file */
 uint8_t asf_get_stream_count(asf_file_t *file);
 
-/* get properties of a stream, the resulting pointer and its contents should NOT be freed */
-asf_stream_properties_t *asf_get_stream_properties(asf_file_t *file, uint8_t track);
+/* get info of a stream, the resulting pointer and its contents should NOT be freed */
+asf_stream_t *asf_get_stream(asf_file_t *file, uint8_t track);
 
 
 /* return non-zero if the file is broadcasted, 0 otherwise */

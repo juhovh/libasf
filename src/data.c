@@ -33,7 +33,7 @@
 	 0 : *(data) : asf_byteio_getWLE(data) : asf_byteio_getDWLE(data))
 
 static int
-asf_data_read_packet_data(asf_packet_t *packet, uint8_t flags, asf_stream_t *stream)
+asf_data_read_packet_data(asf_packet_t *packet, uint8_t flags, asf_iostream_t *iostream)
 {
 	uint8_t datalen;
 	uint8_t data[18];
@@ -44,7 +44,7 @@ asf_data_read_packet_data(asf_packet_t *packet, uint8_t flags, asf_stream_t *str
 	          GETLEN2b((flags >> 3) & 0x03) +
 	          GETLEN2b((flags >> 5) & 0x03) + 6;
 
-	if ((tmp = asf_byteio_read(data, datalen, stream)) < 0) {
+	if ((tmp = asf_byteio_read(data, datalen, iostream)) < 0) {
 		return tmp;
 	}
 
@@ -249,14 +249,14 @@ asf_data_init_packet(asf_packet_t *packet)
 int
 asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 {
-	asf_stream_t *stream;
+	asf_iostream_t *iostream;
 	uint32_t read = 0;
 	int packet_flags, packet_property, payload_length_type;
 	void *tmpptr;
 	int tmp;
 
-	stream = &file->stream;
-	if ((tmp = asf_byteio_readbyte(stream)) < 0) {
+	iostream = &file->iostream;
+	if ((tmp = asf_byteio_readbyte(iostream)) < 0) {
 		return ASF_ERROR_EOF;
 	}
 	read = 1;
@@ -286,7 +286,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 
 		if ((tmp = asf_byteio_read(packet->ec_data,
 		                           packet->ec_length,
-		                           stream)) < 0) {
+		                           iostream)) < 0) {
 			return tmp;
 		}
 		read += packet->ec_length;
@@ -294,13 +294,13 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 		packet->ec_length = 0;
 	}
 
-	if ((packet_flags = asf_byteio_readbyte(stream)) < 0 ||
-	    (packet_property = asf_byteio_readbyte(stream)) < 0) {
+	if ((packet_flags = asf_byteio_readbyte(iostream)) < 0 ||
+	    (packet_property = asf_byteio_readbyte(iostream)) < 0) {
 		return ASF_ERROR_IO;
 	}
 	read += 2;
 
-	tmp = asf_data_read_packet_data(packet, packet_flags, stream);
+	tmp = asf_data_read_packet_data(packet, packet_flags, iostream);
 	if (tmp < 0) {
 		return tmp;
 	}
@@ -333,7 +333,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 
 	/* check if we have multiple payloads */
 	if (packet_flags & 0x01) {
-		if ((tmp = asf_byteio_readbyte(stream)) < 0) {
+		if ((tmp = asf_byteio_readbyte(iostream)) < 0) {
 			return tmp;
 		}
 		read++;
@@ -366,7 +366,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 		packet->payload_data_size = packet->payload_count;
 	}
 
-	if ((tmp = asf_byteio_read(packet->payload_data, packet->payload_data_len, stream)) < 0) {
+	if ((tmp = asf_byteio_read(packet->payload_data, packet->payload_data_len, iostream)) < 0) {
 		return tmp;
 	}
 

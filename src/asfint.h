@@ -87,7 +87,7 @@ typedef struct asf_object_index_s asf_object_index_t;
 
 struct asf_file_s {
 	const char *filename;
-	asf_stream_t stream;
+	asf_iostream_t iostream;
 
 	uint64_t position;
 	uint64_t packet;
@@ -112,7 +112,7 @@ struct asf_file_s {
 	uint32_t packet_size;
 	uint32_t max_bitrate;
 
-	asf_stream_properties_t streams[ASF_MAX_STREAMS];
+	asf_stream_t streams[ASF_MAX_STREAMS];
 };
 
 #endif
