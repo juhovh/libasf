@@ -37,16 +37,20 @@ typedef unsigned __int64 uint64_t;
 
 
 struct asf_stream_s {
-	/* read function, returns -1 on error, 0 on EOF and read bytes otherwise */
+	/* read function, returns -1 on error, 0 on EOF and read bytes
+	 * otherwise */
 	int32_t (*read)(void *opaque, void *buffer, int32_t size);
 
-	/* write function, returns -1 on error, 0 on EOF and written bytes otherwise */
+	/* write function, returns -1 on error, 0 on EOF and written
+	 * bytes otherwise */
 	int32_t (*write)(void *opaque, void *buffer, int32_t size);
 
-	/* seek function, seeks to offset from beginning of the file, returns -1 on error, 0 on EOF */
+	/* seek function, seeks to offset from beginning of the file,
+	 * returns -1 on error, 0 on EOF */
 	int64_t (*seek)(void *opaque, int64_t offset);
 
-	/* opaque data pointer passed to each of the stream handling callbacks */
+	/* opaque data pointer passed to each of the stream handling
+	 * callbacks */
 	void *opaque;
 };
 typedef struct asf_stream_s asf_stream_t;
@@ -71,7 +75,7 @@ typedef struct asf_metadata_s asf_metadata_t;
 
 struct asf_payload_s {
 	uint8_t stream_number;	/* the stream number this payload belongs to */
-	uint8_t key_frame;	/* a flag indicating if this payload contains a key frame or not */
+	uint8_t key_frame;	/* a flag indicating if this payload contains a key frame  */
 
 	uint32_t media_object_number;	/* number of media object this payload is part of */
 	uint32_t media_object_offset;	/* byte offset from beginning of media object */
@@ -147,14 +151,41 @@ enum asf_stream_type_e {
 };
 typedef enum asf_stream_type_e asf_stream_type_t;
 
-#define ASF_STREAM_FLAG_NONE     0x0000
-#define ASF_STREAM_FLAG_HIDDEN   0x0001
-#define ASF_STREAM_FLAG_EXTENDED 0x0002
+#define ASF_STREAM_FLAG_NONE       0x0000
+#define ASF_STREAM_FLAG_AVAILABLE  0x0001
+#define ASF_STREAM_FLAG_HIDDEN     0x0002
+#define ASF_STREAM_FLAG_EXTENDED   0x0004
+
+struct asf_stream_extprop_s {
+	uint64_t start_time;
+	uint64_t end_time;
+	uint32_t data_bitrate;
+	uint32_t buffer_size;
+	uint32_t initial_buf_fullness;
+	uint32_t data_bitrate2;
+	uint32_t buffer_size2;
+	uint32_t initial_buf_fullness2;
+	uint32_t max_obj_size;
+	uint32_t flags;
+	uint16_t stream_num;
+	uint16_t lang_idx;
+	uint64_t avg_time_per_frame;
+	uint16_t stream_name_count;
+	uint16_t num_payload_ext;
+};
+typedef struct asf_stream_ext_properties_s asf_stream_ext_properties_t;
 
 struct asf_stream_properties_s {
 	asf_stream_type_t type;	/* type of this current stream */
 	uint16_t flags;         /* possible flags related to this stream */
-	void *properties;	/* pointer to type specific data (ie. waveformatex or bitmapinfoheader) */
+
+	/* pointer to type specific data (ie. waveformatex or bitmapinfoheader)
+	 * only available if ASF_STREAM_FLAG_AVAILABLE flag is set, otherwise NULL */
+	void *properties;
+
+	/* pointer to extended properties of the stream if they specified
+	 * only available if ASF_STREAM_FLAG_EXTENDED flag is set, otherwise NULL */
+	asf_stream_ext_properties_t *ext_properties;
 };
 typedef struct asf_stream_properties_s asf_stream_properties_t;
 
