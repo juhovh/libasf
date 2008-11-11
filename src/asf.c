@@ -59,6 +59,9 @@ asf_open_cb(asf_iostream_t *iostream)
 	asf_file_t *file;
 	int i;
 
+	if (!iostream)
+		return NULL;
+
 	file = calloc(1, sizeof(asf_file_t));
 	if (!file)
 		return NULL;
@@ -113,7 +116,7 @@ asf_init(asf_file_t *file)
 		                       file->data->size;
 
 		seek_position = file->iostream.seek(file->iostream.opaque,
-		                                  file->index_position);
+		                                    file->index_position);
 
 		/* if first seek fails, we can try to recover and just ignore seeking */
 		if (seek_position >= 0) {
@@ -159,9 +162,9 @@ asf_init(asf_file_t *file)
 void
 asf_close(asf_file_t *file)
 {
-	int i;
-
 	if (file) {
+		int i;
+
 		asf_free_header(file->header);
 		free(file->data);
 		if (file->index)
