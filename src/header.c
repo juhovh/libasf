@@ -32,10 +32,10 @@
  * Finds an object with the corresponding GUID type from header object. If
  * not found, just returns NULL.
  */
-static asf_object_t *
+static asfint_object_t *
 asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 {
-	asf_object_t *current;
+	asfint_object_t *current;
 
 	current = header->first;
 	while (current) {
@@ -59,7 +59,7 @@ asf_parse_header_stream_properties(asf_stream_t *stream,
                                    uint8_t *objdata,
                                    uint32_t objsize)
 {
-	guid_t guid;
+	asf_guid_t guid;
 	guid_type_t type;
 	uint32_t datalen;
 	uint8_t *data;
@@ -270,7 +270,7 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 	}
 
 	if (datalen > 0) {
-		guid_t guid;
+		asf_guid_t guid;
 
 		debug_printf("hidden stream properties object found!");
 
@@ -330,7 +330,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 {
 	/* some flags for mandatory subobjects */
 	int fileprop = 0, streamprop = 0;
-	asf_object_t *current;
+	asfint_object_t *current;
 
 	if (header->first) {
 		current = header->first;
@@ -517,7 +517,7 @@ asf_free_header(asf_object_header_t *header)
 		return;
 
 	if (header->first) {
-		asf_object_t *current = header->first, *next;
+		asfint_object_t *current = header->first, *next;
 		while (current) {
 			next = current->next;
 			free(current);
@@ -526,7 +526,7 @@ asf_free_header(asf_object_header_t *header)
 	}
 
 	if (header->ext) {
-		asf_object_t *current = header->ext->first, *next;
+		asfint_object_t *current = header->ext->first, *next;
 		while (current) {
 			next = current->next;
 			free(current);
@@ -547,7 +547,7 @@ asf_free_header(asf_object_header_t *header)
 asf_metadata_t *
 asf_header_metadata(asf_object_header_t *header)
 {
-	asf_object_t *current;
+	asfint_object_t *current;
 	asf_metadata_t *ret;
 
 	/* allocate the metadata struct */

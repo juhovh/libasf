@@ -62,7 +62,7 @@ asf_byteio_getQWLE(uint8_t *data)
 }
 
 void
-asf_byteio_getGUID(guid_t *guid, uint8_t *data)
+asf_byteio_getGUID(asf_guid_t *guid, uint8_t *data)
 {
 	guid->v1 = asf_byteio_getDWLE(data);
 	guid->v2 = asf_byteio_getWLE(data + 4);

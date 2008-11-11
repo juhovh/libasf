@@ -35,6 +35,13 @@ typedef unsigned __int64 uint64_t;
 #include <stdint.h>
 #endif
 
+struct asf_guid_s {
+	uint32_t v1;
+	uint32_t v2;
+	uint16_t v3;
+	uint8_t  v4[8];
+};
+typedef struct asf_guid_s asf_guid_t;
 
 struct asf_iostream_s {
 	/* read function, returns -1 on error, 0 on EOF and read bytes
@@ -204,6 +211,13 @@ enum asf_error_e {
 	ASF_ERROR_SEEK           = -10  /* file is seekable but seeking failed */
 };
 
+struct asf_object_s {
+	asf_guid_t   guid;
+	uint64_t     size;
+	uint64_t     datalen;
+	uint8_t      *data;
+};
+typedef struct asf_object_s asf_object_t;
 
 /* initialize the library using file on a local filesystem */
 asf_file_t *asf_open_file(const char *filename);

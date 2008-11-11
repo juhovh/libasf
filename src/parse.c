@@ -34,7 +34,7 @@
  * the object header (GUID + data size)
  */
 static void
-asf_parse_read_object(asf_object_t *obj, uint8_t *data)
+asf_parse_read_object(asfint_object_t *obj, uint8_t *data)
 {
 	asf_byteio_getGUID(&obj->guid, data);
 	obj->type = asf_guid_get_type(&obj->guid);
@@ -84,7 +84,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 	datalen = header->datalen;
 	data = header->data;
 	while (datalen > 0) {
-		asf_object_t *current;
+		asfint_object_t *current;
 
 		if (datalen < 24) {
 			/* not enough data for reading a new object */
@@ -92,7 +92,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 		}
 
 		/* Allocate a new subobject */
-		current = malloc(sizeof(asf_object_t));
+		current = malloc(sizeof(asfint_object_t));
 		if (!current) {
 			return ASF_ERROR_OUTOFMEM;
 		}
@@ -160,7 +160,7 @@ asf_parse_header(asf_file_t *file)
 	}
 
 	/* read the object and check its size value */
-	asf_parse_read_object((asf_object_t *) header, hdata);
+	asf_parse_read_object((asfint_object_t *) header, hdata);
 	if (header->size < 30) {
 		/* invalid size for header object */
 		return ASF_ERROR_OBJECT_SIZE;
@@ -199,14 +199,14 @@ asf_parse_header(asf_file_t *file)
 		datalen = header->datalen;
 		data = header->data;
 		for (i=0; i<header->subobjects; i++) {
-			asf_object_t *current;
+			asfint_object_t *current;
 
 			if (datalen < 24) {
 				/* not enough data for reading object */
 				break;
 			}
 
-			current = malloc(sizeof(asf_object_t));
+			current = malloc(sizeof(asfint_object_t));
 			if (!current) {
 				return ASF_ERROR_OUTOFMEM;
 			}
@@ -309,7 +309,7 @@ asf_parse_data(asf_file_t *file)
 	}
 
 	/* read the object and check its size value */
-	asf_parse_read_object((asf_object_t *) data, ddata);
+	asf_parse_read_object((asfint_object_t *) data, ddata);
 	if (data->size < 50) {
 		/* invalid size for data object */
 		return ASF_ERROR_OBJECT_SIZE;
@@ -369,7 +369,7 @@ asf_parse_index(asf_file_t *file)
 		return ASF_ERROR_OUTOFMEM;
 	}
 
-	asf_parse_read_object((asf_object_t *) index, idata);
+	asf_parse_read_object((asfint_object_t *) index, idata);
 	if (index->type != GUID_INDEX) {
 		tmp = index->size;
 		free(index);
