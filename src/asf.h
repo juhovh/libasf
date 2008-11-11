@@ -219,8 +219,12 @@ void asf_close(asf_file_t *file);
 /* initialize the library and read all header information of the ASF file */
 int asf_init(asf_file_t *file);
 
+
 /* create a packet structure for reading data packets */
 asf_packet_t *asf_packet_create();
+
+/* free the packet structure allocated earlier, need to be called only once */
+void asf_packet_destroy(asf_packet_t *packet);
 
 /* get next packet from the stream to the specified packet structure */
 int asf_get_packet(asf_file_t *file, asf_packet_t *packet);
@@ -228,15 +232,12 @@ int asf_get_packet(asf_file_t *file, asf_packet_t *packet);
 /* seek to the closest (key frame) packet specified by milliseconds position */
 int64_t asf_seek_to_msec(asf_file_t *file, int64_t msec);
 
-/* free the packet structure allocated earlier, need to be called only once */
-void asf_free_packet(asf_packet_t *packet);
-
 
 /* get metadata information of the ASF file handle */
-asf_metadata_t *asf_get_metadata(asf_file_t *file);
+asf_metadata_t *asf_header_get_metadata(asf_file_t *file);
 
 /* free metadata structure received from the library */
-void asf_free_metadata(asf_metadata_t *metadata);
+void asf_metadata_destroy(asf_metadata_t *metadata);
 
 
 /* calculate how many streams are available in current ASF file */

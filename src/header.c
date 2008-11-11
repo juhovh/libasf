@@ -493,7 +493,7 @@ asf_header_destroy(asf_object_header_t *header)
  * asf_header_metadata_destroy function. Returns NULL on failure.
  */
 asf_metadata_t *
-asf_header_get_metadata(asf_object_header_t *header)
+asf_header_metadata(asf_object_header_t *header)
 {
 	asf_object_t *current;
 	asf_metadata_t *ret;
@@ -632,7 +632,7 @@ asf_header_get_metadata(asf_object_header_t *header)
  * Free the metadata struct and all fields it includes
  */
 void
-asf_header_metadata_destroy(asf_metadata_t *metadata)
+asf_header_free_metadata(asf_metadata_t *metadata)
 {
 	int i;
 

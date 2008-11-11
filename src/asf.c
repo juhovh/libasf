@@ -77,6 +77,7 @@ asf_open_cb(asf_iostream_t *iostream)
 		file->streams[i].type = ASF_STREAM_TYPE_NONE;
 		file->streams[i].flags = ASF_STREAM_FLAG_NONE;
 		file->streams[i].properties = NULL;
+		file->streams[i].extended = NULL;
 	}
 
 	return file;
@@ -216,7 +217,7 @@ asf_get_packet(asf_file_t *file, asf_packet_t *packet)
 }
 
 void
-asf_free_packet(asf_packet_t *packet)
+asf_packet_destroy(asf_packet_t *packet)
 {
 	asf_data_free_packet(packet);
 	free(packet);
@@ -299,18 +300,18 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 }
 
 asf_metadata_t *
-asf_get_metadata(asf_file_t *file)
+asf_header_get_metadata(asf_file_t *file)
 {
-	if (!file)
+	if (!file || file->header)
 		return NULL;
 
-	return asf_header_get_metadata(file->header);
+	return asf_header_metadata(file->header);
 }
 
 void
-asf_free_metadata(asf_metadata_t *metadata)
+asf_metadata_destroy(asf_metadata_t *metadata)
 {
-	asf_header_metadata_destroy(metadata);
+	asf_header_free_metadata(metadata);
 }
 
 uint8_t

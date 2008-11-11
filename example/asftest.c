@@ -41,10 +41,10 @@ int main(int argc, char *argv[]) {
 	}
 
 	asf_init(file);
-	metadata = asf_get_metadata(file);
+	metadata = asf_header_get_metadata(file);
 	if (metadata) {
 		print_metadata(metadata);
-		asf_free_metadata(metadata);
+		asf_metadata_destroy(metadata);
 	}
 
 	pkt = asf_packet_create();
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 	}
-	asf_free_packet(pkt);
+	asf_packet_destroy(pkt);
 /*
 	printf("position after seek %lld\n", 
 	asf_seek_to_msec(file, 18000));
