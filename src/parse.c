@@ -102,6 +102,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 			/* invalid object size */
 			break;
 		}
+		current->datalen = current->size - 24;
 		current->data = data + 24;
 
 		/* add to the list of subobjects */
@@ -242,6 +243,7 @@ asf_parse_header(asf_file_t *file)
 					debug_printf("WARNING! Second header extension object found, ignoring it!");
 				}
 
+				current->datalen = current->size - 24;
 				current->data = data + 24;
 
 				/* add to list of subobjects */
