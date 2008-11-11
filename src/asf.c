@@ -75,6 +75,7 @@ asf_open_cb(asf_stream_t *stream)
 
 	for (i=0; i < ASF_MAX_STREAMS; i++) {
 		file->streams[i].type = ASF_STREAM_TYPE_NONE;
+		file->streams[i].flags = ASF_STREAM_FLAG_NONE;
 		file->streams[i].properties = NULL;
 	}
 

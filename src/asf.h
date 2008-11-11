@@ -142,13 +142,18 @@ enum asf_stream_type_e {
 	ASF_STREAM_TYPE_NONE     = 0x00,
 	ASF_STREAM_TYPE_AUDIO    = 0x01,
 	ASF_STREAM_TYPE_VIDEO    = 0x02,
-	ASF_STREAM_TYPE_COMMAND  = 0x04,
+	ASF_STREAM_TYPE_COMMAND  = 0x03,
 	ASF_STREAM_TYPE_UNKNOWN  = 0xff
 };
 typedef enum asf_stream_type_e asf_stream_type_t;
 
+#define ASF_STREAM_FLAG_NONE     0x0000
+#define ASF_STREAM_FLAG_HIDDEN   0x0001
+#define ASF_STREAM_FLAG_EXTENDED 0x0002
+
 struct asf_stream_properties_s {
 	asf_stream_type_t type;	/* type of this current stream */
+	uint16_t flags;         /* possible flags related to this stream */
 	void *properties;	/* pointer to type specific data (ie. waveformatex or bitmapinfoheader) */
 };
 typedef struct asf_stream_properties_s asf_stream_properties_t;

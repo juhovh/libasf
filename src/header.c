@@ -57,7 +57,8 @@ asf_header_get_object(asf_object_header_t *header, const guid_type_t type)
 static int
 asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
                                    uint8_t *objdata,
-                                   uint32_t objsize)
+                                   uint32_t objsize,
+                                   int hidden)
 {
 	guid_t guid;
 	guid_type_t type;
@@ -190,6 +191,10 @@ asf_parse_header_stream_properties(asf_stream_properties_t *sprop,
 		break;
 	}
 
+	if (hidden) {
+		sprop->flags |= ASF_STREAM_FLAG_HIDDEN;
+	}
+
 	return 0;
 }
 
@@ -265,7 +270,8 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 
 					ret = asf_parse_header_stream_properties(sprop,
 					                                         current->data,
-					                                         size);
+					                                         size,
+					                                         0);
 
 					if (ret < 0) {
 						return ret;
@@ -416,8 +422,9 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 						sprop = file->streams + stream;
 
 						ret = asf_parse_header_stream_properties(sprop,
-											 data + 24,
-											 datalen);
+						                                         data + 24,
+						                                         datalen,
+						                                         1);
 
 						if (ret < 0) {
 							return ret;
