@@ -131,6 +131,8 @@ struct asf_waveformatex_s {
 };
 typedef struct asf_waveformatex_s asf_waveformatex_t;
 
+#define ASF_BITMAPINFOHEADER_SIZE 40
+
 /* bitmapinfoheader fields specified in Microsoft documentation:
    http://msdn2.microsoft.com/en-us/library/ms532290.aspx */
 struct asf_bitmapinfoheader_s {

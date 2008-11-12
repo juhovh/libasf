@@ -178,22 +178,22 @@ asf_parse_header(asf_file_t *file)
 	header->first = NULL;
 	header->last = NULL;
 
+	/* the header data needs to be allocated for reading */
+	header->datalen = header->size - 30;
+	header->data = malloc(header->datalen * sizeof(uint8_t));
+	if (!header->data) {
+		return ASF_ERROR_OUTOFMEM;
+	}
+
+	tmp = asf_byteio_read(header->data, header->datalen, iostream);
+	if (tmp < 0) {
+		return tmp;
+	}
+
 	if (header->subobjects > 0) {
 		uint64_t datalen;
 		uint8_t *data;
 		int i;
-
-		/* the header data needs to be allocated for reading */
-		header->datalen = header->size - 30;
-		header->data = malloc(header->datalen * sizeof(uint8_t));
-		if (!header->data) {
-			return ASF_ERROR_OUTOFMEM;
-		}
-
-		tmp = asf_byteio_read(header->data, header->datalen, iostream);
-		if (tmp < 0) {
-			return tmp;
-		}
 
 		debug_printf("starting to read subobjects");
 
