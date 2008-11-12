@@ -369,6 +369,7 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	if ((tmp = asf_byteio_read(packet->payload_data, packet->payload_data_len, iostream)) < 0) {
 		return tmp;
 	}
+	read += tmp;
 
 	tmp = asf_data_read_payloads(packet, file->preroll, packet_flags & 0x01,
 	                             payload_length_type, packet_property,
@@ -377,10 +378,9 @@ asf_data_get_packet(asf_packet_t *packet, asf_file_t *file)
 	if (tmp < 0) {
 		return tmp;
 	}
-	read += tmp;
 
-	debug_printf("packet read, eclen: %d, length: %d, padding: %d, time %d, duration: %d, payloads: %d",
-	             packet->ec_length, packet->length, packet->padding_length, packet->send_time,
+	debug_printf("packet read %d bytes, eclen: %d, length: %d, padding: %d, time %d, duration: %d, payloads: %d",
+	             read, packet->ec_length, packet->length, packet->padding_length, packet->send_time,
 	             packet->duration, packet->payload_count);
 
 	return read;

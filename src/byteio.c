@@ -16,6 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stdio.h>
 #include <string.h>
 #include "byteio.h"
 
@@ -106,6 +107,7 @@ asf_byteio_read(uint8_t *data, int size, asf_iostream_t *iostream)
 		read += tmp;
 
 		if (read == size) {
+			printf("Byteio read %d bytes\n", read);
 			return read;
 		}
 	}
