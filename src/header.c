@@ -290,9 +290,6 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 			int ret;
 
 			stream->flags |= ASF_STREAM_FLAG_HIDDEN;
-			stream->flags |= ASF_STREAM_FLAG_EXTENDED;
-			stream->extended = ext;
-
 			ret = asf_parse_header_stream_properties(stream,
 								 data + 24,
 								 datalen);
