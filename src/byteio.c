@@ -81,19 +81,6 @@ asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data)
 }
 
 int
-asf_byteio_readbyte(asf_iostream_t *iostream)
-{
-	uint8_t byte;
-	int ret;
-
-	if ((ret = asf_byteio_read(&byte, 1, iostream)) <= 0) {
-		return (ret == 0) ? ASF_ERROR_EOF : ASF_ERROR_IO;
-	}
-
-	return byte;
-}
-
-int
 asf_byteio_read(uint8_t *data, int size, asf_iostream_t *iostream)
 {
 	int read = 0, tmp;

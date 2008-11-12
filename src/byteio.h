@@ -28,7 +28,6 @@ uint64_t asf_byteio_getQWLE(uint8_t *data);
 void asf_byteio_getGUID(asf_guid_t *guid, uint8_t *data);
 void asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data);
 
-int asf_byteio_readbyte(asf_iostream_t *iostream);
 int asf_byteio_read(uint8_t *data, int size, asf_iostream_t *iostream);
 
 #endif
