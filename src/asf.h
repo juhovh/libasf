@@ -100,7 +100,6 @@ typedef struct asf_payload_s asf_payload_t;
 struct asf_packet_s {
 	uint8_t ec_length;	/* error correction data length */
 	uint8_t *ec_data;	/* error correction data array */
-	uint8_t ec_data_size;	/* for internal library use, not to be modified by applications! */
 
 	uint32_t length;		/* length of this packet, usually constant per stream */
 	uint32_t padding_length;	/* length of the padding after the data in this packet */
@@ -113,7 +112,9 @@ struct asf_packet_s {
 
 	uint32_t payload_data_len;	/* length of the raw payload data of this packet */
 	uint8_t *payload_data;		/* the raw payload data of this packet, usually not useful */
-	uint32_t payload_data_size;	/* for internal library use, not to be modified by applications! */
+
+	uint8_t *data;		/* for internal library use, not to be modified by applications! */
+	uint32_t data_size;	/* for internal library use, not to be modified by applications! */
 };
 typedef struct asf_packet_s asf_packet_t;
 
