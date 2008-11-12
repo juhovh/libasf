@@ -200,47 +200,41 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
                                             uint8_t *objdata,
                                             uint32_t objsize)
 {
-	asf_stream_extended_t *ext;
+	asf_stream_extended_t ext;
 	uint32_t datalen;
 	uint8_t *data;
 	uint16_t flags;
 	int i;
 
-	ext = malloc(sizeof(asf_stream_extended_t));
-	if (!ext)
-		return ASF_ERROR_OUTOFMEM;
-	
-	ext->start_time = asf_byteio_getQWLE(objdata);
-	ext->end_time = asf_byteio_getQWLE(objdata + 8);
-	ext->data_bitrate = asf_byteio_getDWLE(objdata + 16);
-	ext->buffer_size = asf_byteio_getDWLE(objdata + 20);
-	ext->initial_buf_fullness = asf_byteio_getDWLE(objdata + 24);
-	ext->data_bitrate2 = asf_byteio_getDWLE(objdata + 28);
-	ext->buffer_size2 = asf_byteio_getDWLE(objdata + 32);
-	ext->initial_buf_fullness2 = asf_byteio_getDWLE(objdata + 36);
-	ext->max_obj_size = asf_byteio_getDWLE(objdata + 40);
-	ext->flags = asf_byteio_getDWLE(objdata + 44);
-	ext->stream_num = asf_byteio_getWLE(objdata + 48);
-	ext->lang_idx = asf_byteio_getWLE(objdata + 50);
-	ext->avg_time_per_frame = asf_byteio_getQWLE(objdata + 52);
-	ext->stream_name_count = asf_byteio_getWLE(objdata + 60);
-	ext->num_payload_ext = asf_byteio_getWLE(objdata + 62);
+	ext.start_time = asf_byteio_getQWLE(objdata);
+	ext.end_time = asf_byteio_getQWLE(objdata + 8);
+	ext.data_bitrate = asf_byteio_getDWLE(objdata + 16);
+	ext.buffer_size = asf_byteio_getDWLE(objdata + 20);
+	ext.initial_buf_fullness = asf_byteio_getDWLE(objdata + 24);
+	ext.data_bitrate2 = asf_byteio_getDWLE(objdata + 28);
+	ext.buffer_size2 = asf_byteio_getDWLE(objdata + 32);
+	ext.initial_buf_fullness2 = asf_byteio_getDWLE(objdata + 36);
+	ext.max_obj_size = asf_byteio_getDWLE(objdata + 40);
+	ext.flags = asf_byteio_getDWLE(objdata + 44);
+	ext.stream_num = asf_byteio_getWLE(objdata + 48);
+	ext.lang_idx = asf_byteio_getWLE(objdata + 50);
+	ext.avg_time_per_frame = asf_byteio_getQWLE(objdata + 52);
+	ext.stream_name_count = asf_byteio_getWLE(objdata + 60);
+	ext.num_payload_ext = asf_byteio_getWLE(objdata + 62);
 
 	datalen = objsize - 88;
 	data = objdata + 64;
 
 	/* iterate through all name strings */
-	for (i=0; i<ext->stream_name_count; i++) {
+	for (i=0; i<ext.stream_name_count; i++) {
 		uint16_t strlen;
 
 		if (datalen < 4) {
-			free(ext);
 			return ASF_ERROR_INVALID_VALUE;
 		}
 
 		strlen = asf_byteio_getWLE(data + 2);
 		if (strlen > datalen) {
-			free(ext);
 			return ASF_ERROR_INVALID_LENGTH;
 		}
 
@@ -250,17 +244,15 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 	}
 
 	/* iterate through all extension systems */
-	for (i=0; i<ext->num_payload_ext; i++) {
+	for (i=0; i<ext.num_payload_ext; i++) {
 		uint32_t extsyslen;
 
 		if (datalen < 22) {
-			free(ext);
 			return ASF_ERROR_INVALID_VALUE;
 		}
 
 		extsyslen = asf_byteio_getDWLE(data + 18);
 		if (extsyslen > datalen) {
-			free(ext);
 			return ASF_ERROR_INVALID_LENGTH;
 		}
 
@@ -276,30 +268,25 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 
 		/* this is almost same as in stream properties handler */
 		if (datalen < 78) {
-			free(ext);
 			return ASF_ERROR_OBJECT_SIZE;
 		}
 
 		/* check that we really have a stream properties object */
 		asf_byteio_getGUID(&guid, data);
 		if (asf_guid_get_type(&guid) != GUID_STREAM_PROPERTIES) {
-			free(ext);
 			return ASF_ERROR_INVALID_OBJECT;
 		}
 		if (asf_byteio_getQWLE(data + 16) != datalen) {
-			free(ext);
 			return ASF_ERROR_OBJECT_SIZE;
 		}
 
 		flags = asf_byteio_getWLE(data + 72);
 
-		if ((flags & 0x7f) != ext->stream_num || stream->type) {
+		if ((flags & 0x7f) != ext.stream_num || stream->type) {
 			/* only one stream object per stream allowed and
 			 * stream ids have to match with both objects*/
-			free(ext);
 			return ASF_ERROR_INVALID_OBJECT;
 		} else {
-			asf_stream_t *stream;
 			int ret;
 
 			stream->flags |= ASF_STREAM_FLAG_HIDDEN;
@@ -315,6 +302,13 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 			}
 		}
 	}
+
+	stream->extended = malloc(sizeof(asf_stream_extended_t));
+	if (!stream->extended) {
+		return ASF_ERROR_OUTOFMEM;
+	}
+	stream->flags |= ASF_STREAM_FLAG_EXTENDED;
+	memcpy(stream->extended, &ext, sizeof(ext));
 
 	return 0;
 }
