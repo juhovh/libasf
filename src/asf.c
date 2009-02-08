@@ -306,7 +306,7 @@ asf_seek_to_msec(asf_file_t *file, int64_t msec)
 asf_metadata_t *
 asf_header_get_metadata(asf_file_t *file)
 {
-	if (!file || file->header)
+	if (!file || !file->header)
 		return NULL;
 
 	return asf_header_metadata(file->header);
