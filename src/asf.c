@@ -35,7 +35,7 @@ asf_open_file(const char *filename)
 	asf_iostream_t stream;
 	FILE *fstream;
 
-	fstream = fopen(filename, "r");
+	fstream = fopen(filename, "rb");
 	if (!fstream)
 		return NULL;
 
