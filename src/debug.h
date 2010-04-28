@@ -25,16 +25,13 @@
 #ifdef __GNUC__
 # define INLINE static __inline__
 #else
-# define INLINE
+# define INLINE static
 #endif
 
-#ifdef WIN32
-# ifdef DEBUG
-#  define debug_printf printf
-# else
-#  define debug_printf
-# endif
+#if defined(WIN32) && defined(DEBUG)
+# define debug_printf printf
 #else
+
 INLINE void
 debug_printf(char *fmt, ...)
 {
@@ -47,6 +44,8 @@ debug_printf(char *fmt, ...)
 	fprintf(stderr, "\n");
 # endif
 }
+
 #endif
+
 
 #endif
