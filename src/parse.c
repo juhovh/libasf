@@ -66,7 +66,7 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 
 	if (header->size < 46) {
 		/* invalide size for headerext */
-		return ASF_ERROR_OBJECT_SIZE;
+		return ASF_ERROR_INVALID_OBJECT_SIZE;
 	}
 
 	/* Read reserved and datalen fields from the buffer */
@@ -149,7 +149,7 @@ asf_parse_header(asf_file_t *file)
 
 	/* object minimum is 24 bytes and header needs to have
 	 * the subobject count field and two reserved fields */
-	tmp = asf_byteio_read(hdata, 30, iostream);
+	tmp = asf_byteio_read(iostream, hdata, 30);
 	if (tmp < 0) {
 		/* not enough data to read the header object */
 		return tmp;
@@ -165,7 +165,7 @@ asf_parse_header(asf_file_t *file)
 	asf_parse_read_object((asfint_object_t *) header, hdata);
 	if (header->size < 30) {
 		/* invalid size for header object */
-		return ASF_ERROR_OBJECT_SIZE;
+		return ASF_ERROR_INVALID_OBJECT_SIZE;
 	}
 
 	/* read header object specific compulsory fields */
@@ -185,7 +185,7 @@ asf_parse_header(asf_file_t *file)
 		return ASF_ERROR_OUTOFMEM;
 	}
 
-	tmp = asf_byteio_read(header->data, header->datalen, iostream);
+	tmp = asf_byteio_read(iostream, header->data, header->datalen);
 	if (tmp < 0) {
 		return tmp;
 	}
@@ -300,7 +300,7 @@ asf_parse_data(asf_file_t *file)
 
 	/* object minimum is 24 bytes and data object needs to have
 	 * 26 additional bytes for its internal fields */
-	tmp = asf_byteio_read(ddata, 50, iostream);
+	tmp = asf_byteio_read(iostream, ddata, 50);
 	if (tmp < 0) {
 		return tmp;
 	}
@@ -315,7 +315,7 @@ asf_parse_data(asf_file_t *file)
 	asf_parse_read_object((asfint_object_t *) data, ddata);
 	if (data->size < 50) {
 		/* invalid size for data object */
-		return ASF_ERROR_OBJECT_SIZE;
+		return ASF_ERROR_INVALID_OBJECT_SIZE;
 	}
 
 	/* read data object specific compulsory fields */
@@ -361,7 +361,7 @@ asf_parse_index(asf_file_t *file)
 	iostream = &file->iostream;
 
 	/* read the raw data of an index header */
-	tmp = asf_byteio_read(idata, 56, iostream);
+	tmp = asf_byteio_read(iostream, idata, 56);
 	if (tmp < 0) {
 		return tmp;
 	}
@@ -384,7 +384,7 @@ asf_parse_index(asf_file_t *file)
 	if (index->size < 56) {
 		/* invalid size for index object */
 		free(index);
-		return ASF_ERROR_OBJECT_SIZE;
+		return ASF_ERROR_INVALID_OBJECT_SIZE;
 	}
 
 	asf_byteio_getGUID(&index->file_id, idata + 24);
@@ -403,7 +403,7 @@ asf_parse_index(asf_file_t *file)
 		free(index);
 		return ASF_ERROR_OUTOFMEM;
 	}
-	tmp = asf_byteio_read(entry_data, entry_data_size, iostream);
+	tmp = asf_byteio_read(iostream, entry_data, entry_data_size);
 	if (tmp < 0) {
 		free(index);
 		free(entry_data);

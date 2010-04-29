@@ -102,6 +102,7 @@ struct asf_packet_s {
 	uint8_t *ec_data;	/* error correction data array */
 
 	uint32_t length;		/* length of this packet, usually constant per stream */
+	uint32_t sequence;              /* sequence value reserved for future use, should be ignored */
 	uint32_t padding_length;	/* length of the padding after the data in this packet */
 	uint32_t send_time;		/* send time of this packet in milliseconds */
 	uint16_t duration;		/* duration of this packet in milliseconds */
@@ -202,17 +203,26 @@ typedef struct asf_stream_s asf_stream_t;
 typedef struct asf_file_s asf_file_t;
 
 enum asf_error_e {
-	ASF_ERROR_INTERNAL       = -1,  /* incorrect input to API calls */
-	ASF_ERROR_OUTOFMEM       = -2,  /* some malloc inside program failed */
-	ASF_ERROR_EOF            = -3,  /* unexpected end of file */
-	ASF_ERROR_IO             = -4,  /* error reading or writing to file */
-	ASF_ERROR_INVALID_LENGTH = -5,  /* length value conflict in input data */
-	ASF_ERROR_INVALID_VALUE  = -6,  /* other value conflict in input data */
-	ASF_ERROR_INVALID_OBJECT = -7,  /* ASF object missing or in wrong place */
-	ASF_ERROR_OBJECT_SIZE    = -8,  /* invalid ASF object size (too small) */
-	ASF_ERROR_SEEKABLE       = -9,  /* file not seekable */
-	ASF_ERROR_SEEK           = -10  /* file is seekable but seeking failed */
+	/* fatal errors related to library function */
+	ASF_ERROR_INTERNAL            = -100,  /* incorrect input to API calls */
+	ASF_ERROR_OUTOFMEM            = -101,  /* some malloc inside program failed */
+
+	/* errors related to reading data from stream */
+	ASF_ERROR_NEEDS_BYTES         = -200,  /* not enough data from read */
+	ASF_ERROR_EOF                 = -201,  /* end of file reached */
+	ASF_ERROR_IO                  = -202,  /* error reading or writing to file */
+
+	/* errors related to file being corrupted */
+	ASF_ERROR_INVALID_LENGTH      = -300,  /* length value conflict in input data */
+	ASF_ERROR_INVALID_VALUE       = -301,  /* other value conflict in input data */
+	ASF_ERROR_INVALID_OBJECT      = -302,  /* ASF object missing or in wrong place */
+	ASF_ERROR_INVALID_OBJECT_SIZE = -303,  /* invalid ASF object size (too small) */
+
+	/* errors related to seeking, usually non-fatal */
+	ASF_ERROR_SEEKABLE            = -400,  /* file not seekable */
+	ASF_ERROR_SEEK                = -401   /* file is seekable but seeking failed */
 };
+typedef enum asf_error_e asf_error_t;
 
 struct asf_object_s {
 	asf_guid_t   guid;

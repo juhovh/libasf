@@ -81,7 +81,7 @@ asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data)
 }
 
 int
-asf_byteio_read(uint8_t *data, int size, asf_iostream_t *iostream)
+asf_byteio_read(asf_iostream_t *iostream, uint8_t *data, int size)
 {
 	int read = 0, tmp;
 
@@ -91,11 +91,13 @@ asf_byteio_read(uint8_t *data, int size, asf_iostream_t *iostream)
 
 	while ((tmp = iostream->read(iostream->opaque, data+read, size-read)) > 0) {
 		read += tmp;
-
 		if (read == size) {
 			return read;
 		}
 	}
+
+	/* FIXME: should return tmp if any bytes were read, but the
+	          rest of the code needs to be fixed before that */
 
 	return (tmp == 0) ? ASF_ERROR_EOF : ASF_ERROR_IO;
 }

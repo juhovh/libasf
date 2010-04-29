@@ -268,7 +268,7 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 
 		/* this is almost same as in stream properties handler */
 		if (datalen < 78) {
-			return ASF_ERROR_OBJECT_SIZE;
+			return ASF_ERROR_INVALID_OBJECT_SIZE;
 		}
 
 		/* check that we really have a stream properties object */
@@ -277,7 +277,7 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 			return ASF_ERROR_INVALID_OBJECT;
 		}
 		if (asf_byteio_getQWLE(data + 16) != datalen) {
-			return ASF_ERROR_OBJECT_SIZE;
+			return ASF_ERROR_INVALID_OBJECT_SIZE;
 		}
 
 		flags = asf_byteio_getWLE(data + 72);
@@ -333,7 +333,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 			{
 				uint32_t max_packet_size;
 				if (size < 104)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 
 				if (fileprop) {
 					/* multiple file properties objects not allowed */
@@ -368,7 +368,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				int ret;
 
 				if (size < 78)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 
 				streamprop = 1;
 				flags = asf_byteio_getWLE(current->data + 48);
@@ -393,7 +393,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				uint32_t stringlen = 0;
 
 				if (size < 34)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 
 				stringlen += asf_byteio_getWLE(current->data);
 				stringlen += asf_byteio_getWLE(current->data + 2);
@@ -411,17 +411,17 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				break;
 			case GUID_CODEC_LIST:
 				if (size < 44)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_STREAM_BITRATE_PROPERTIES:
 				if (size < 26)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_PADDING:
 				break;
 			case GUID_EXTENDED_CONTENT_DESCRIPTION:
 				if (size < 26)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_UNKNOWN:
 				/* unknown guid type */
@@ -443,11 +443,11 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 			switch (current->type) {
 			case GUID_METADATA:
 				if (size < 26)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_LANGUAGE_LIST:
 				if (size < 26)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_EXTENDED_STREAM_PROPERTIES:
 			{
@@ -456,7 +456,7 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 				int ret;
 
 				if (size < 88)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 
 				stream_num = asf_byteio_getWLE(current->data + 48);
 				stream = &file->streams[stream_num];
@@ -472,11 +472,11 @@ asf_parse_header_validate(asf_file_t *file, asf_object_header_t *header)
 			}
 			case GUID_ADVANCED_MUTUAL_EXCLUSION:
 				if (size < 42)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_STREAM_PRIORITIZATION:
 				if (size < 26)
-					return ASF_ERROR_OBJECT_SIZE;
+					return ASF_ERROR_INVALID_OBJECT_SIZE;
 				break;
 			case GUID_UNKNOWN:
 				/* unknown guid type */
