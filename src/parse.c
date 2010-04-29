@@ -22,7 +22,6 @@
 #include "asf.h"
 #include "asfint.h"
 #include "byteio.h"
-#include "utf.h"
 #include "header.h"
 #include "guid.h"
 #include "debug.h"

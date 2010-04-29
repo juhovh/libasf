@@ -12,7 +12,6 @@ def build(bld):
 	guid.c
 	header.c
 	parse.c
-	utf.c
 	'''
 	obj.ccflags='-DDEBUG -g -O0 -ansi -pedantic -Wall -Werror'
 	obj.target='asf'
