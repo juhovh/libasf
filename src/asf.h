@@ -20,7 +20,7 @@
 #define ASF_H
 
 /* used int types for different platforms */
-#if defined(_WIN32) && !defined(__MINGW_H)
+#if defined(WIN32) && !defined(__MINGW_H)
 typedef char int8_t;
 typedef unsigned char uint8_t;
 typedef short int16_t;
@@ -34,7 +34,7 @@ typedef unsigned __int64 uint64_t;
 #include <stdint.h>
 #endif
 
-#if defined(_WIN32) && defined(DLL_EXPORT)
+#if defined(WIN32) && defined(DLL_EXPORT)
 # define LIBASF_API __declspec(dllexport)
 #else
 # define LIBASF_API

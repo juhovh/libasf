@@ -22,17 +22,13 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef __GNUC__
-# define INLINE static __inline__
-#else
-# define INLINE static
-#endif
+#include "asfint.h"
+
 
 #if defined(WIN32) && defined(DEBUG)
 # define debug_printf printf
 #else
-
-INLINE void
+static void
 debug_printf(char *fmt, ...)
 {
 # ifdef DEBUG
@@ -44,8 +40,6 @@ debug_printf(char *fmt, ...)
 	fprintf(stderr, "\n");
 # endif
 }
-
 #endif
-
 
 #endif

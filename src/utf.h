@@ -20,7 +20,8 @@
 #define UTF_H
 
 #include <stdlib.h>
-#include "asf.h"
+
+#include "asfint.h"
 
 /**
  * Decode UTF-16LE text from buffer of buflen size and
