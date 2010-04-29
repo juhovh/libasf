@@ -21,16 +21,6 @@
 #include "asfint.h"
 #include "byteio.h"
 
-void
-asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data)
-{
-	int i;
-
-	for (i=0; i<strlen; i++) {
-		string[i] = GetWLE(data + i*2);
-	}
-}
-
 int
 asf_byteio_read(asf_iostream_t *iostream, uint8_t *data, int size)
 {

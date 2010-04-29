@@ -22,7 +22,6 @@
 #include "asf.h"
 #include "guid.h"
 
-void asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data);
 int asf_byteio_read(asf_iostream_t *iostream, uint8_t *data, int size);
 
 #endif
