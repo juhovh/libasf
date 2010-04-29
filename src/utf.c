@@ -42,7 +42,7 @@ asf_utf8_from_utf16le(uint8_t *buf, uint16_t buflen)
 		uint16_t wchar1, wchar2;
 
 		wchar1 = asf_byteio_getWLE(&buf[i*2]);
-		if (wchar1 >= 0xD800 && wchar1 < 0xDB00) {
+		if (wchar1 >= 0xD800 && wchar1 < 0xDC00) {
 			i++;
 
 			if (i*2 >= buflen) {
@@ -75,7 +75,7 @@ asf_utf8_from_utf16le(uint8_t *buf, uint16_t buflen)
 		uint32_t codepoint;
 
 		wchar1 = asf_byteio_getWLE(&buf[i*2]);
-		if (wchar1 >= 0xD800 && wchar1 < 0xDB00) {
+		if (wchar1 >= 0xD800 && wchar1 < 0xDC00) {
 			i++;
 			wchar2 = asf_byteio_getWLE(&buf[i*2]);
 			codepoint = 0x10000;
