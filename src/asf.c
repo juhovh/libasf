@@ -21,12 +21,36 @@
 
 #include "asf.h"
 #include "asfint.h"
-#include "fileio.h"
 #include "byteio.h"
 #include "header.h"
 #include "parse.h"
 #include "data.h"
 #include "debug.h"
+
+
+static int
+asf_fileio_read_cb(void *stream, void *buffer, int size)
+{
+	int ret;
+
+	ret = fread(buffer, 1, size, stream);
+	if (!ret && !feof(stream))
+		return -1;
+
+	return ret;
+}
+
+static int64_t
+asf_fileio_seek_cb(void *stream, int64_t offset)
+{
+	int ret;
+
+	ret = fseek(stream, offset, SEEK_SET);
+	if (ret < 0)
+		return -1;
+
+	return ret;
+}
 
 asf_file_t *
 asf_open_file(const char *filename)
@@ -40,7 +64,7 @@ asf_open_file(const char *filename)
 		return NULL;
 
 	stream.read = asf_fileio_read_cb;
-	stream.write = asf_fileio_write_cb;
+	stream.write = NULL;
 	stream.seek = asf_fileio_seek_cb;
 	stream.opaque = fstream;
 
