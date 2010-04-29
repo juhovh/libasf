@@ -19,18 +19,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "asf.h"
 #include "asfint.h"
 #include "byteio.h"
 #include "data.h"
 #include "parse.h"
 #include "debug.h"
-
-#define GETLEN2b(bits) (((bits) == 0x03) ? 4 : bits)
-
-#define GETVALUE2b(bits, data) \
-	(((bits) != 0x03) ? ((bits) != 0x02) ? ((bits) != 0x01) ? \
-	 0 : *(data) : asf_byteio_getWLE(data) : asf_byteio_getDWLE(data))
 
 static int
 asf_data_read_packet_fields(asf_packet_t *packet, uint8_t flags,
@@ -52,9 +45,9 @@ asf_data_read_packet_fields(asf_packet_t *packet, uint8_t flags,
 	data += GETLEN2b((flags >> 1) & 0x03);
 	packet->padding_length = GETVALUE2b((flags >> 3) & 0x03, data);
 	data += GETLEN2b((flags >> 3) & 0x03);
-	packet->send_time = asf_byteio_getDWLE(data);
+	packet->send_time = GetDWLE(data);
 	data += 4;
-	packet->duration = asf_byteio_getWLE(data);
+	packet->duration = GetWLE(data);
 	data += 2;
 
 	return datalen;
@@ -120,7 +113,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 			pl.replicated_data = data + skip;
 			skip += pl.replicated_length;
 
-			pl.pts = asf_byteio_getDWLE(pl.replicated_data + 4);
+			pl.pts = GetDWLE(pl.replicated_data + 4);
 		} else if (pl.replicated_length == 1) {
 			if (skip+1 > datalen) {
 				/* not enough data */
@@ -154,7 +147,7 @@ asf_data_read_payloads(asf_packet_t *packet,
 				/* not enough data */
 				return ASF_ERROR_INVALID_LENGTH;
 			}
-			pl.datalen = asf_byteio_getWLE(data + skip);
+			pl.datalen = GetWLE(data + skip);
 			skip += 2;
 		} else {
 			pl.datalen = datalen - skip;

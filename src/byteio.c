@@ -17,58 +17,9 @@
  */
 
 #include <string.h>
+
+#include "asfint.h"
 #include "byteio.h"
-
-uint16_t
-asf_byteio_getWLE(uint8_t *data)
-{
-	uint16_t ret;
-	int i;
-
-	for (i=1, ret=0; i>=0; i--) {
-		ret <<= 8;
-		ret |= data[i];
-	}
-
-	return ret;
-}
-
-uint32_t
-asf_byteio_getDWLE(uint8_t *data)
-{
-	uint32_t ret;
-	int i;
-
-	for (i=3, ret=0; i>=0; i--) {
-		ret <<= 8;
-		ret |= data[i];
-	}
-
-	return ret;
-}
-
-uint64_t
-asf_byteio_getQWLE(uint8_t *data)
-{
-	uint64_t ret;
-	int i;
-
-	for (i=7, ret=0; i>=0; i--) {
-		ret <<= 8;
-		ret |= data[i];
-	}
-
-	return ret;
-}
-
-void
-asf_byteio_getGUID(asf_guid_t *guid, uint8_t *data)
-{
-	guid->v1 = asf_byteio_getDWLE(data);
-	guid->v2 = asf_byteio_getWLE(data + 4);
-	guid->v3 = asf_byteio_getWLE(data + 6);
-	memcpy(guid->v4, data + 8, 8);
-}
 
 void
 asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data)
@@ -76,7 +27,7 @@ asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data)
 	int i;
 
 	for (i=0; i<strlen; i++) {
-		string[i] = asf_byteio_getWLE(data + i*2);
+		string[i] = GetWLE(data + i*2);
 	}
 }
 

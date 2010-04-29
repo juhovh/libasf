@@ -22,12 +22,7 @@
 #include "asf.h"
 #include "guid.h"
 
-uint16_t asf_byteio_getWLE(uint8_t *data);
-uint32_t asf_byteio_getDWLE(uint8_t *data);
-uint64_t asf_byteio_getQWLE(uint8_t *data);
-void asf_byteio_getGUID(asf_guid_t *guid, uint8_t *data);
 void asf_byteio_get_string(uint16_t *string, uint16_t strlen, uint8_t *data);
-
 int asf_byteio_read(asf_iostream_t *iostream, uint8_t *data, int size);
 
 #endif

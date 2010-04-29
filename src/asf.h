@@ -112,14 +112,6 @@ struct asf_bitmapinfoheader_s {
 typedef struct asf_bitmapinfoheader_s asf_bitmapinfoheader_t;
 
 
-struct asf_guid_s {
-	uint32_t v1;
-	uint32_t v2;
-	uint16_t v3;
-	uint8_t  v4[8];
-};
-typedef struct asf_guid_s asf_guid_t;
-
 struct asf_iostream_s {
 	/* read function, returns -1 on error, 0 on EOF and read bytes
 	 * otherwise */

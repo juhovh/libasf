@@ -35,9 +35,9 @@
 static void
 asf_parse_read_object(asfint_object_t *obj, uint8_t *data)
 {
-	asf_byteio_getGUID(&obj->guid, data);
+	GetGUID(data, &obj->guid);
 	obj->type = asf_guid_get_type(&obj->guid);
-	obj->size = asf_byteio_getQWLE(data + 16);
+	obj->size = GetQWLE(data + 16);
 	obj->full_data = data;
 	obj->datalen = 0;
 	obj->data = NULL;
@@ -69,9 +69,9 @@ asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t bufle
 	}
 
 	/* Read reserved and datalen fields from the buffer */
-	asf_byteio_getGUID(&header->reserved1, buf + 24);
-	header->reserved2 = asf_byteio_getWLE(buf + 40);
-	header->datalen = asf_byteio_getDWLE(buf + 42);
+	GetGUID(buf + 24, &header->reserved1);
+	header->reserved2 = GetWLE(buf + 40);
+	header->datalen = GetDWLE(buf + 42);
 
 	if (header->datalen != header->size - 46) {
 		/* invalid header extension data length value */
@@ -168,7 +168,7 @@ asf_parse_header(asf_file_t *file)
 	}
 
 	/* read header object specific compulsory fields */
-	header->subobjects = asf_byteio_getDWLE(hdata + 24);
+	header->subobjects = GetDWLE(hdata + 24);
 	header->reserved1 = hdata[28];
 	header->reserved2 = hdata[29];
 
@@ -318,9 +318,9 @@ asf_parse_data(asf_file_t *file)
 	}
 
 	/* read data object specific compulsory fields */
-	asf_byteio_getGUID(&data->file_id, ddata + 24);
-	data->total_data_packets = asf_byteio_getQWLE(ddata + 40);
-	data->reserved = asf_byteio_getWLE(ddata + 48);
+	GetGUID(ddata + 24, &data->file_id);
+	data->total_data_packets = GetQWLE(ddata + 40);
+	data->reserved = GetWLE(ddata + 48);
 	data->packets_position = file->position + 50;
 
 	/* If the file_id GUID in data object doesn't match the
@@ -386,10 +386,10 @@ asf_parse_index(asf_file_t *file)
 		return ASF_ERROR_INVALID_OBJECT_SIZE;
 	}
 
-	asf_byteio_getGUID(&index->file_id, idata + 24);
-	index->entry_time_interval = asf_byteio_getQWLE(idata + 40);
-	index->max_packet_count = asf_byteio_getDWLE(idata + 48);
-	index->entry_count = asf_byteio_getDWLE(idata + 52);
+	GetGUID(idata + 24, &index->file_id);
+	index->entry_time_interval = GetQWLE(idata + 40);
+	index->max_packet_count = GetDWLE(idata + 48);
+	index->entry_count = GetDWLE(idata + 52);
 
 	if (index->entry_count * 6 + 56 > index->size) {
 		free(index);
@@ -417,8 +417,8 @@ asf_parse_index(asf_file_t *file)
 	}
 
 	for (i=0; i<index->entry_count; i++) {
-		index->entries[i].packet_index = asf_byteio_getDWLE(entry_data + i*6);
-		index->entries[i].packet_count = asf_byteio_getWLE(entry_data + i*6 + 4);
+		index->entries[i].packet_index = GetDWLE(entry_data + i*6);
+		index->entries[i].packet_count = GetWLE(entry_data + i*6 + 4);
 	}
 
 	free(entry_data);

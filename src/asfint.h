@@ -19,8 +19,65 @@
 #ifndef ASFINT_H
 #define ASFINT_H
 
+#include <string.h>
+
 #include "asf.h"
 #include "guid.h"
+
+#ifdef __GNUC__
+# define INLINE __inline__
+#else
+# define INLINE
+#endif
+
+static INLINE uint16_t
+GetWLE(const void *pointer)
+{
+	const uint8_t *data = pointer;
+	return ((uint16_t)data[1] << 8) |
+	       ((uint16_t)data[0]);
+}
+
+static INLINE uint32_t
+GetDWLE(const void *pointer)
+{
+	const uint8_t *data = pointer;
+	return ((uint32_t)data[3] << 24) |
+	       ((uint32_t)data[2] << 16) |
+	       ((uint32_t)data[1] <<  8) |
+	       ((uint32_t)data[0]);
+}
+
+static INLINE uint64_t
+GetQWLE(const void *pointer)
+{
+	const uint8_t *data = pointer;
+	return ((uint64_t)data[7] << 56) |
+	       ((uint64_t)data[6] << 48) |
+	       ((uint64_t)data[5] << 40) |
+	       ((uint64_t)data[4] << 32) |
+	       ((uint64_t)data[3] << 24) |
+	       ((uint64_t)data[2] << 16) |
+	       ((uint64_t)data[1] <<  8) |
+	       ((uint64_t)data[0]);
+}
+
+static INLINE void
+GetGUID(const void *pointer, asf_guid_t *guid)
+{
+	const uint8_t *data = pointer;
+	guid->v1 = GetDWLE(data);
+	guid->v2 = GetWLE(data + 4);
+	guid->v3 = GetWLE(data + 6);
+	memcpy(guid->v4, data + 8, 8);
+}
+
+#define GETLEN2b(bits) (((bits) == 0x03) ? 4 : bits)
+#define GETVALUE2b(bits, data) \
+	(((bits) != 0x03) ? ((bits) != 0x02) ? ((bits) != 0x01) ? \
+	0 : *((uint8_t *)data) : GetDWLE(data) : GetQWLE(data))
+
+
 
 /* DO NOT MODIFY THE FIRST 3 VARIABLES, BECAUSE THEY ARE
  * ALSO DEFINED IN asf.h HEADER AND WILL BREAK THINGS */

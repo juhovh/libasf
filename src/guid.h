@@ -21,6 +21,14 @@
 
 #include "asf.h"
 
+struct asf_guid_s {
+	uint32_t v1;
+	uint32_t v2;
+	uint16_t v3;
+	uint8_t  v4[8];
+};
+typedef struct asf_guid_s asf_guid_t;
+
 typedef enum {
 	GUID_UNKNOWN,
 
