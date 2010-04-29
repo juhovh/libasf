@@ -21,7 +21,7 @@
 
 #include "asf.h"
 
-enum guid_type_e {
+typedef enum {
 	GUID_UNKNOWN,
 
 	GUID_HEADER,
@@ -49,11 +49,10 @@ enum guid_type_e {
 	GUID_STREAM_TYPE_COMMAND,
 	GUID_STREAM_TYPE_EXTENDED,
 	GUID_STREAM_TYPE_EXTENDED_AUDIO
-};
-typedef enum guid_type_e guid_type_t;
+} guid_type_t;
 
 
-int asf_guid_match(const asf_guid_t *guid1, const asf_guid_t *guid2);
+int asf_guid_equals(const asf_guid_t *guid1, const asf_guid_t *guid2);
 guid_type_t asf_guid_get_object_type(const asf_guid_t *guid);
 guid_type_t asf_guid_get_stream_type(const asf_guid_t *guid);
 guid_type_t asf_guid_get_type(const asf_guid_t *guid);

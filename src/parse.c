@@ -325,7 +325,7 @@ asf_parse_data(asf_file_t *file)
 
 	/* If the file_id GUID in data object doesn't match the
 	 * file_id GUID in headers, the file is corrupted */
-	if (!asf_guid_match(&data->file_id, &file->file_id)) {
+	if (!asf_guid_equals(&data->file_id, &file->file_id)) {
 		return ASF_ERROR_INVALID_VALUE;
 	}
 
