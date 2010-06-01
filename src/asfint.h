@@ -38,7 +38,7 @@ GetGUID(const void *pointer, asf_guid_t *guid)
 #define GETLEN2b(bits) (((bits) == 0x03) ? 4 : bits)
 #define GETVALUE2b(bits, data) \
 	(((bits) != 0x03) ? ((bits) != 0x02) ? ((bits) != 0x01) ? \
-	0 : *((uint8_t *)data) : GetDWLE(data) : GetQWLE(data))
+	0 : *((uint8_t *)data) : GetWLE(data) : GetDWLE(data))
 
 
 
