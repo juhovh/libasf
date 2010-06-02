@@ -98,7 +98,7 @@ asf_open_cb(asf_iostream_t *iostream)
 		file->streams[i].type = ASF_STREAM_TYPE_NONE;
 		file->streams[i].flags = ASF_STREAM_FLAG_NONE;
 		file->streams[i].properties = NULL;
-		file->streams[i].extended = NULL;
+		file->streams[i].extended_properties = NULL;
 	}
 
 	return file;
@@ -194,7 +194,7 @@ asf_close(asf_file_t *file)
 
 		for (i=0; i < ASF_MAX_STREAMS; i++) {
 			free(file->streams[i].properties);
-			free(file->streams[i].extended);
+			free(file->streams[i].extended_properties);
 		}
 
 		free(file);

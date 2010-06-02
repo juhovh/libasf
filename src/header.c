@@ -199,7 +199,7 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
                                             uint8_t *objdata,
                                             uint32_t objsize)
 {
-	asf_stream_extended_t ext;
+	asf_stream_extended_properties_t ext;
 	uint32_t datalen;
 	uint8_t *data;
 	uint16_t flags;
@@ -299,12 +299,12 @@ asf_parse_header_extended_stream_properties(asf_stream_t *stream,
 		}
 	}
 
-	stream->extended = malloc(sizeof(asf_stream_extended_t));
-	if (!stream->extended) {
+	stream->extended_properties = malloc(sizeof(asf_stream_extended_properties_t));
+	if (!stream->extended_properties) {
 		return ASF_ERROR_OUTOFMEM;
 	}
 	stream->flags |= ASF_STREAM_FLAG_EXTENDED;
-	memcpy(stream->extended, &ext, sizeof(ext));
+	memcpy(stream->extended_properties, &ext, sizeof(ext));
 
 	return 0;
 }

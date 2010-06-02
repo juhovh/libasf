@@ -188,7 +188,7 @@ struct asf_packet_s {
 };
 typedef struct asf_packet_s asf_packet_t;
 
-struct asf_stream_extended_s {
+struct asf_stream_extended_properties_s {
 	uint64_t start_time;
 	uint64_t end_time;
 	uint32_t data_bitrate;
@@ -205,7 +205,7 @@ struct asf_stream_extended_s {
 	uint16_t stream_name_count;
 	uint16_t num_payload_ext;
 };
-typedef struct asf_stream_extended_s asf_stream_extended_t;
+typedef struct asf_stream_extended_properties_s asf_stream_extended_properties_t;
 
 struct asf_stream_s {
 	asf_stream_type_t type;	/* type of this current stream */
@@ -217,7 +217,7 @@ struct asf_stream_s {
 
 	/* pointer to extended properties of the stream if they specified
 	 * only available if ASF_STREAM_FLAG_EXTENDED flag is set, otherwise NULL */
-	asf_stream_extended_t *extended;
+	asf_stream_extended_properties_t *extended_properties;
 };
 typedef struct asf_stream_s asf_stream_t;
 

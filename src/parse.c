@@ -329,7 +329,7 @@ asf_parse_data(asf_file_t *file)
 		return ASF_ERROR_INVALID_VALUE;
 	}
 
-	/* if data->total_data_packets is non-zero (not a iostream) and
+	/* if data->total_data_packets is non-zero (not a stream) and
 	   the data packets count doesn't match, return error */
 	if (data->total_data_packets &&
 	    data->total_data_packets != file->data_packets_count) {
