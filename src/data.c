@@ -85,7 +85,8 @@ asf_data_read_payloads(asf_packet_t *packet,
                        uint32_t datalen)
 {
 	asf_payload_t pl;
-	int i, tmp, skip;
+        uint32_t skip;
+	int i, tmp;
 
 	skip = 0, i = 0;
 	while (i < packet->payload_count) {
@@ -154,7 +155,8 @@ asf_data_read_payloads(asf_packet_t *packet,
 		}
 
 		if (compressed) {
-			int payloads, start = skip, used = 0, idx;
+			uint32_t start = skip, used = 0;
+			int payloads, idx;
 
 			/* count how many compressed payloads this payload includes */
 			for (payloads=0; used < pl.datalen; payloads++) {
