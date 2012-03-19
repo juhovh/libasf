@@ -60,7 +60,7 @@ asf_parse_read_object(asfint_object_t *obj, uint8_t *data)
 static int
 asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t buflen)
 {
-	int64_t datalen;
+	uint64_t datalen;
 	uint8_t *data;
 
 	if (header->size < 46) {
@@ -354,7 +354,8 @@ asf_parse_index(asf_file_t *file)
 	uint8_t idata[56];
 	uint64_t entry_data_size;
 	uint8_t *entry_data = NULL;
-	int tmp, i;
+	uint32_t i;
+	int tmp;
 
 	file->index = NULL;
 	iostream = &file->iostream;
