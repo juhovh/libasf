@@ -245,8 +245,8 @@ asf_packet_destroy(asf_packet_t *packet)
 	free(packet);
 }
 
-int64_t
-asf_seek_to_msec(asf_file_t *file, int64_t msec)
+uint64_t
+asf_seek_to_msec(asf_file_t *file, uint64_t msec)
 {
 	uint64_t packet;
 	uint64_t new_position;

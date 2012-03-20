@@ -250,7 +250,7 @@ LIBASF_API void asf_packet_destroy(asf_packet_t *packet);
 LIBASF_API int asf_get_packet(asf_file_t *file, asf_packet_t *packet);
 
 /* seek to the closest (key frame) packet specified by milliseconds position */
-LIBASF_API int64_t asf_seek_to_msec(asf_file_t *file, int64_t msec);
+LIBASF_API uint64_t asf_seek_to_msec(asf_file_t *file, uint64_t msec);
 
 
 /* get metadata information of the ASF file handle */
