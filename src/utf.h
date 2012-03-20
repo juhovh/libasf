@@ -32,7 +32,7 @@
  * Buflen is in bytes.
  */
 static char *
-asf_utf8_from_utf16le(uint8_t *buf, uint16_t buflen)
+asf_utf8_from_utf16le(uint8_t *buf, uint16_t buflen, uint32_t *conv_length)
 {
 	uint32_t length, pos;
 	char *ret;
@@ -104,6 +104,10 @@ asf_utf8_from_utf16le(uint8_t *buf, uint16_t buflen)
 	}
 
 	ret[length] = '\0';
+
+	if (conv_length)
+		*conv_length = length;
+
 	return ret;
 }
 

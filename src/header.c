@@ -559,7 +559,7 @@ asf_header_metadata(asf_object_header_t *header)
 			if (!strlen)
 				continue;
 
-			str = asf_utf8_from_utf16le(current->data + 10 + read, strlen);
+			str = asf_utf8_from_utf16le(current->data + 10 + read, strlen, NULL);
 			read += strlen;
 
 			switch (i) {
@@ -606,11 +606,12 @@ asf_header_metadata(asf_object_header_t *header)
 		position = 2;
 		for (i=0; i<ret->extended_count; i++) {
 			uint16_t length, type;
+			uint32_t conv_length;
 
 			length = GetWLE(current->data + position);
 			position += 2;
 
-			ret->extended[i].key = asf_utf8_from_utf16le(current->data + position, length);
+			ret->extended[i].key = asf_utf8_from_utf16le(current->data + position, length, NULL);
 			position += length;
 
 			type = GetWLE(current->data + position);
@@ -622,7 +623,9 @@ asf_header_metadata(asf_object_header_t *header)
 			switch (type) {
 			case 0:
 				/* type of the value is a string */
-				ret->extended[i].value = asf_utf8_from_utf16le(current->data + position, length);
+				ret->extended[i].value = asf_utf8_from_utf16le(current->data + position,
+				                                               length, &conv_length);
+				ret->extended[i].length = (ret->extended[i].value) ? conv_length : 0;
 				break;
 			case 1:
 				/* type of the value is a data block */
@@ -633,34 +636,36 @@ asf_header_metadata(asf_object_header_t *header)
 					ret->extended[i].value[j*2+1] = hex[current->data[position]&0x0f];
 				}
 				ret->extended[i].value[j*2] = '\0';
+				ret->extended[i].length = length * 2;
 				break;
 			case 2:
 				/* type of the value is a boolean */
 				ret->extended[i].value = malloc(6 * sizeof(char));
-				sprintf(ret->extended[i].value, "%s",
-				        *current->data ? "true" : "false");
+				ret->extended[i].length = sprintf(ret->extended[i].value, "%s",
+				                                  *current->data ? "true" : "false");
 				break;
 			case 3:
 				/* type of the value is a signed 32-bit integer */
 				ret->extended[i].value = malloc(11 * sizeof(char));
-				sprintf(ret->extended[i].value, "%u",
-				        GetDWLE(current->data + position));
+				ret->extended[i].length = sprintf(ret->extended[i].value, "%u",
+				                                  GetDWLE(current->data + position));
 				break;
 			case 4:
 				/* FIXME: This doesn't print whole 64-bit integer */
 				ret->extended[i].value = malloc(21 * sizeof(char));
-				sprintf(ret->extended[i].value, "%u",
-				        (uint32_t) GetQWLE(current->data + position));
+				ret->extended[i].length = sprintf(ret->extended[i].value, "%u",
+				                                  (uint32_t) GetQWLE(current->data + position));
 				break;
 			case 5:
 				/* type of the value is a signed 16-bit integer */
 				ret->extended[i].value = malloc(6 * sizeof(char));
-				sprintf(ret->extended[i].value, "%u",
-				        GetWLE(current->data + position));
+				ret->extended[i].length = sprintf(ret->extended[i].value, "%u",
+				                                  GetWLE(current->data + position));
 				break;
 			default:
 				/* Unknown value type... */
 				ret->extended[i].value = NULL;
+				ret->extended[i].length = 0;
 				break;
 			}
 			position += length;

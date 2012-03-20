@@ -132,8 +132,9 @@ struct asf_iostream_s {
 typedef struct asf_iostream_s asf_iostream_t;
 
 struct asf_metadata_entry_s {
-	char *key;	/* key of extended metadata entry */
-	char *value;	/* value of extended metadata entry */
+	char *key;		/* key of extended metadata entry */
+	char *value;		/* value of extended metadata entry */
+	uint16_t length;	/* length of extended metadata entry value */
 };
 typedef struct asf_metadata_entry_s asf_metadata_entry_t;
 
