@@ -59,7 +59,7 @@ asf_parse_read_object(asfint_object_t *obj, uint8_t *data)
  * not parsed, but they are added as a linked list to the header object.
  */
 static int
-asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf, uint64_t buflen)
+asf_parse_headerext(asf_object_headerext_t *header, uint8_t *buf)
 {
 	uint64_t datalen;
 	uint8_t *data;
@@ -231,7 +231,7 @@ asf_parse_header(asf_file_t *file)
 				headerext = (asf_object_headerext_t *) current;
 				headerext->first = NULL;
 				headerext->last = NULL;
-				ret = asf_parse_headerext(headerext, data, datalen);
+				ret = asf_parse_headerext(headerext, data);
 
 				if (ret < 0) {
 					/* error parsing header extension */
