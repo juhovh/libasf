@@ -131,7 +131,7 @@ asf_parse_header_stream_properties(asf_stream_t *stream,
 	case GUID_STREAM_TYPE_VIDEO:
 	{
 		asf_bitmapinfoheader_t *bmih;
-		uint32_t width, height, flags, data_size;
+		uint32_t width, height, flags /* ,data_size */;
 
 		stream->type = ASF_STREAM_TYPE_VIDEO;
 
@@ -142,7 +142,7 @@ asf_parse_header_stream_properties(asf_stream_t *stream,
 		width = GetDWLE(data);
 		height = GetDWLE(data + 4);
 		flags = data[8];
-		data_size = GetWLE(data + 9);
+		/* data_size = GetWLE(data + 9); */
 
 		data += 11;
 		datalen -= 11;
