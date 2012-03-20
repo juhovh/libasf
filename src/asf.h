@@ -241,7 +241,7 @@ LIBASF_API int asf_init(asf_file_t *file);
 
 
 /* create a packet structure for reading data packets */
-LIBASF_API asf_packet_t *asf_packet_create();
+LIBASF_API asf_packet_t *asf_packet_create(void);
 
 /* free the packet structure allocated earlier, need to be called only once */
 LIBASF_API void asf_packet_destroy(asf_packet_t *packet);
