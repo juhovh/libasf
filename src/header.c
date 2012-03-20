@@ -587,7 +587,7 @@ asf_header_metadata(asf_object_header_t *header)
 
 	current = asf_header_get_object(header, GUID_EXTENDED_CONTENT_DESCRIPTION);
 	if (current) {
-		int i, j, position;
+		int i, position;
 
 		ret->extended_count = GetWLE(current->data);
 		ret->extended = calloc(ret->extended_count, sizeof(asf_metadata_entry_t));
@@ -629,14 +629,9 @@ asf_header_metadata(asf_object_header_t *header)
 				break;
 			case 1:
 				/* type of the value is a data block */
-				ret->extended[i].value = malloc((length*2 + 1) * sizeof(char));
-				for (j=0; j<length; j++) {
-					static const char hex[16] = "0123456789ABCDEF";
-					ret->extended[i].value[j*2+0] = hex[current->data[position]>>4];
-					ret->extended[i].value[j*2+1] = hex[current->data[position]&0x0f];
-				}
-				ret->extended[i].value[j*2] = '\0';
-				ret->extended[i].length = length * 2;
+				ret->extended[i].value = malloc(length * sizeof(char));
+				memcpy(ret->extended[i].value, &current->data[position], length);
+				ret->extended[i].length = length;
 				break;
 			case 2:
 				/* type of the value is a boolean */
