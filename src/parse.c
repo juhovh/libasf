@@ -25,6 +25,7 @@
 #include "header.h"
 #include "guid.h"
 #include "debug.h"
+#include "parse.h"
 
 /**
  * Read next object from buffer pointed by data. Notice that
