@@ -12,7 +12,7 @@ def build(bld):
 	header.c
 	parse.c
 	'''
-	obj.ccflags='-DDEBUG -g -O0 -ansi -pedantic -Wall -Wextra'
+	obj.ccflags='-DDEBUG -g -O0 -ansi -pedantic -Wall -Wextra -Wformat=2 -Wformat-nonliteral -Wformat-security -Wmissing-prototypes -Wstrict-prototypes -Wwrite-strings -fdiagnostics-show-option -Werror=implicit-function-declaration'
 	obj.target='asf'
 	obj.name='asflib'
 
