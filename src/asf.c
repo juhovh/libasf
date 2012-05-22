@@ -43,7 +43,11 @@ asf_fileio_read_cb(void *stream, void *buffer, int size)
 static int64_t
 asf_fileio_seek_cb(void *stream, int64_t offset)
 {
-	return fseek(stream, offset, SEEK_SET);
+	int ret = fseek(stream, offset, SEEK_SET);
+	if (ret < 0) {
+		return ret;
+	}
+	return ftell(stream);
 }
 
 asf_file_t *
