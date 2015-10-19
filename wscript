@@ -24,4 +24,8 @@ def build(bld):
 	# process subfolders from here
 	bld.recurse('src')
 
-
+	bld(features='subst',
+		source="libasf.pc.in",
+		target="libasf.pc",
+		install_path="${LIBDIR}/pkgconfig"
+	)
