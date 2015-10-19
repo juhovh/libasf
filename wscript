@@ -13,15 +13,19 @@ APPNAME='libasf'
 srcdir = '.'
 blddir = '_build_'
 
-def set_options(opt):
+def options(opt):
 	# the gcc module provides a --debug-level option
-	opt.tool_options('compiler_cc')
+	opt.load('compiler_c')
 
 def configure(conf):
-	conf.check_tool('compiler_cc')
+	conf.load('compiler_c')
 
 def build(bld):
 	# process subfolders from here
-	bld.add_subdirs('src')
+	bld.recurse('src')
 
-
+	bld(features='subst',
+		source="libasf.pc.in",
+		target="libasf.pc",
+		install_path="${LIBDIR}/pkgconfig"
+	)

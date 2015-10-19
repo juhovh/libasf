@@ -1,0 +1,9 @@
+prefix=@prefix@
+libdir=@libdir@
+includedir=${prefix}/include
+
+Name: ASF library
+Description: Library for ASF format
+Version: 1
+Libs: -L${libdir} -lasf
+Cflags: -I${includedir}

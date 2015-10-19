@@ -3,20 +3,21 @@
 # Thomas Nagy, 2006 (ita)
 
 def build(bld):
-	obj = bld.create_obj('cc', 'shlib')
-	obj.source='''
-	asf.c
-	byteio.c
-	data.c
-	guid.c
-	header.c
-	parse.c
-	'''
-	obj.ccflags='-DDEBUG -g -O0 -ansi -pedantic -Wall -Wextra -Wformat=2 -Wformat-nonliteral -Wformat-security -Wmissing-prototypes -Wstrict-prototypes -Wwrite-strings -fdiagnostics-show-option -Werror=implicit-function-declaration'
-	obj.target='asf'
-	obj.name='asflib'
+	bld(features='c cshlib',
+		source='''
+		asf.c
+		byteio.c
+		data.c
+		guid.c
+		header.c
+		parse.c
+		''',
+		ccflags='-DDEBUG -g -O0 -ansi -pedantic -Wall -Wextra -Wformat=2 -Wformat-nonliteral -Wformat-security -Wmissing-prototypes -Wstrict-prototypes -Wwrite-strings -fdiagnostics-show-option -Werror=implicit-function-declaration',
+		target='asf',
+		name='asflib',
+	)
 
-	install_files('PREFIX', 'include', 'asf.h')
+	bld.install_files('${PREFIX}/include', ['asf.h'])
 
 #def set_options(opt):
 #	# options defined if src/ was to be compiled as a standalone module
